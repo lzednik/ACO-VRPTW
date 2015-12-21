@@ -31,6 +31,10 @@ while iteration <300:
        
     if solution1['visitedCount']==101:
         vehicleNumber-=1
+        
+        phiM2=createPheromoneMatix(size=len(distM),distance=1888)
+        feasLocIN2=len(distM)*[0]
+
 
         #update pheromones
         for vehicle in solution1['vehicles']:
@@ -48,6 +52,7 @@ while iteration <300:
             bsChange=True
         
         if bsChange==True:
+
             print('**********')
             print('The best solution currently is:')
             #for index,vehicle in enumerate(solution['vehicles']):
