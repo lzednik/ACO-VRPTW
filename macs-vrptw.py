@@ -1,6 +1,7 @@
 from funs import *
 from Ant import Ant
 import time
+import pickle
 
 dataM=readData('solomon_r101.txt')
 distM=createDistanceMatrix(dataM)
@@ -96,7 +97,13 @@ while iteration <300:
             print('')
             print('')
             #time.sleep(2)
-    
+            
+            #pickle to save best solution to play with somewhere else
+            #file_name='best_solution'+str(iteration)
+            #fileObject =open(file_name,'wb')
+            #pickle.dump(bestSolution,fileObject)
+            #fileObject.close()
+            
     iteration+=1
 
 
