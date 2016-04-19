@@ -24,9 +24,10 @@ ant0=Ant(vehicleCount=vehicleNumber,depo=0)
 bestSolution=ant0.calculate(dataM,distM,phiM1,feasLocIN1,2)
 
 iteration=0
-while iteration <300:
-    #print('iteration number',antCount)
+while iteration <100:
+    #print('iteration number',antCount
     
+    #solution 1 is looking for a valid solution with fewer number of vehicles
     ant1=Ant(vehicleCount=vehicleNumber-1,depo=0)
     solution1=ant1.calculate(dataM,distM,phiM1,feasLocIN1,2)
        
@@ -34,7 +35,7 @@ while iteration <300:
         vehicleNumber-=1
         
         phiM2=createPheromoneMatix(size=len(distM),distance=1888)
-        feasLocIN2=len(distM)*[0]
+        #feasLocIN2=len(distM)*[0]
 
 
         #update pheromones
@@ -67,7 +68,7 @@ while iteration <300:
             #time.sleep(2)
     
 
-
+    #solution two is looking for a shorter distance
     ant2=Ant(vehicleCount=vehicleNumber,depo=0)
     solution2=ant2.calculate(dataM,distM,phiM2,feasLocIN2,2)
     
@@ -98,14 +99,15 @@ while iteration <300:
             print('')
             #time.sleep(2)
             
-            file_name='best_solution'+str(iteration)
-            fileObject =open(file_name,'wb')
-            pickle.dump(bestSolution,fileObject)
-            fileObject.close()
+            #pickle to save best solution to play with somewhere else
+            #file_name='best_solution'+str(iteration)
+            #fileObject =open(file_name,'wb')
+            #pickle.dump(bestSolution,fileObject)
+            #fileObject.close()
             
     iteration+=1
 
-
+print('we are done')
 
 
 

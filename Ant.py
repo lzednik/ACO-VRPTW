@@ -50,6 +50,18 @@ class Ant:
                 if len(feasable)>0:
                     #compute attractiveness
                     attractivness={}
+                    
+                    #attractivness based on feasable locations count - does not work all that great
+                    #for nextLoc in feasable:
+                    #    attractivness[nextLoc]=1
+                    #    for loc2 in range(0,len(dataM)-1):
+                    #        if vehicle['time']+max(dataM[nextLoc]['ready_time'],distM[vehicle['currPos']][nextLoc]) +dataM[nextLoc]['service_time'] \
+                    #                    + distM[nextLoc][loc2]+ dataM[loc2]['service_time'] < dataM[loc2]['due_time'] and loc2 not in self.visited:
+                    #            attractivness[nextLoc]+=1
+ 
+
+                    
+                    #attractivnes as in the paper
                     for feasableLoc in feasable:
                         distanceToFeasLoc=distM[vehicle['currPos']][feasableLoc]
                         feasLocReadyTime=dataM[feasableLoc]['ready_time']
@@ -62,21 +74,21 @@ class Ant:
                         eta=1/distance2
                         attractivness[feasableLoc]=eta
                         
-                        if eta>0.9:
-                            print('eta is:\t',eta)
-                            
-                            txtFile = open("Output2.txt","a")
-                            txtFile.write('eta is\t')
-                            txtFile.write(str(eta))
-                            txtFile.write('\nIN\t')
-                            txtFile.write(str(feasLocIN[feasableLoc]))
-                            txtFile.write('\ndistance\t')
-                            txtFile.write(str(distance))
+                        #if eta>0.9:
+                        #    print('eta is:\t',eta)
+                        #    
+                        #    txtFile = open("Output2.txt","a")
+                        #    txtFile.write('eta is\t')
+                        #    txtFile.write(str(eta))
+                        #    txtFile.write('\nIN\t')
+                        #    txtFile.write(str(feasLocIN[feasableLoc]))
+                        #    txtFile.write('\ndistance\t')
+                        #    txtFile.write(str(distance))
 
-                            
-                            txtFile.close()
-                            time.sleep(5)
-                            sys.exit()
+                        #    
+                        #    txtFile.close()
+                        #    time.sleep(5)
+                        #    sys.exit()
 
 
                     bottomSum=0
