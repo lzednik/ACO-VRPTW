@@ -20,7 +20,7 @@ feasLocIN2=len(distM)*[0]
 
 vehicleNumber=60
 
-ant0=Ant(vehicleCount=vehicleNumber,depo=0)
+ant0=Ant(vehicleCount=vehicleNumber,dataM=dataM)
 bestSolution=ant0.calculate(dataM,distM,phiM1,feasLocIN1,2)
 
 iteration=0
@@ -28,7 +28,7 @@ while iteration <100:
     #print('iteration number',antCount
     
     #solution 1 is looking for a valid solution with fewer number of vehicles
-    ant1=Ant(vehicleCount=vehicleNumber-1,depo=0)
+    ant1=Ant(vehicleCount=vehicleNumber-1,dataM=dataM)
     solution1=ant1.calculate(dataM,distM,phiM1,feasLocIN1,2)
        
     if solution1['visitedCount']==101:
@@ -69,7 +69,7 @@ while iteration <100:
     
 
     #solution two is looking for a shorter distance
-    ant2=Ant(vehicleCount=vehicleNumber,depo=0)
+    ant2=Ant(vehicleCount=vehicleNumber,dataM=dataM)
     solution2=ant2.calculate(dataM,distM,phiM2,feasLocIN2,2)
     
     if solution2['visitedCount']==101:
