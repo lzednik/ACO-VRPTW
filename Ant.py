@@ -1,5 +1,6 @@
 from random import choice
 import time,sys
+from os import path
 
 #class Ant
 
@@ -16,9 +17,10 @@ class Ant:
             initAttract={}
             sumAttr=0
             for loc in range(len(dataM)):
-                attr=dataM[loc]['due_time']
-                initAttract[loc]=attr
-                sumAttr+=attr
+                if loc not in self.visited and loc !=0:
+                    attr=dataM[loc]['ready_time']*dataM[loc]['due_time']
+                    initAttract[loc]=attr
+                    sumAttr+=attr
             
 
             initAttract2={}
@@ -47,22 +49,41 @@ class Ant:
             #time.sleep(10)
             initProbList=[]
             for loc in initAttract2:
-                initProbList+=int(initAttract2[loc])*[loc]
+              initProbList+=int(initAttract2[loc])*[loc]
             
             firstLoc=choice(initProbList)
 
+            #print out probabilities
+            PI_Path=path.relpath('Output/ProbsInit.txt')
+            pifile=open(PI_Path,'a')
+            pifile.write('vehicle\t')
+            pifile.write(str(veh))
+            pifile.write('\n')
+            for loc in initAttract2:
+                pifile.write(str(loc))
+                pifile.write('\t')
+                pifile.write(str(initAttract2[loc]))
+                pifile.write('\n')
+            pifile.write('\n\n\n')
+            pifile.close()
+            
             #print('Our first stop is going to be',firstLoc)
             #time.sleep(10)
             self.vehicles.append({'tour':[firstLoc],
                                   'currPos':firstLoc,
                                   'time':dataM[firstLoc]['ready_time']+dataM[firstLoc]['service_time']})
-            for veh in self.vehicles:
-                print(veh)
-                time.sleep(2)
+            
+            self.visited.append(firstLoc)
+            #for veh in self.vehicles:
+            #    print(veh)
+            #    time.sleep(1)
+            #print('')
+            #print('this is all vehs')
+            #time.sleep(5)
     #calculates trips for all vehicles for one ant
     def calculate(self,dataM,distM,phiM,feasLocIN,beta): 
         prevVisitedCount=-1
-        while self.solution['visitedCount']<101 and prevVisitedCount != self.solution['visitedCount']:
+        while self.solution['visitedCount']<100 and prevVisitedCount != self.solution['visitedCount']:
             #print('visited count is',self.solution['visitedCount'])
             prevVisitedCount=self.solution['visitedCount']
 
@@ -173,10 +194,24 @@ class Ant:
                             txtFile.close()
                             time.sleep(5)
                     nextLoc=choice(probList)
-                    
+                   
+                    '''
+                    #print out probabilities
+                    P_Path=path.relpath('Output/Probs.txt')
+                    pfile=open(P_Path,'a')
+                    for prob in probs:
+                        pfile.write(str(prob))
+                        pfile.write('\t')
+                        pfile.write(str(probs[prob]))
+                        pfile.write('\n')
+                    pfile.write('\n\n\n')
+                    pfile.close()
+                    '''
+
                     #need to update vehicle and log the visit
                     vehicle['tour'].append(nextLoc)
-                    self.visited.append(nextLoc)
+                    if nextLoc != 0:
+                        self.visited.append(nextLoc)
                     self.distance+=distM[vehicle['currPos']][nextLoc]
                     vehicle['time']=vehicle['time']+max(distM[vehicle['currPos']][nextLoc],dataM[nextLoc]['ready_time'])+dataM[dataItem]['service_time']
                     feasLocIN[nextLoc]+=1

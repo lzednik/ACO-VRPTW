@@ -2,8 +2,10 @@ from funs import *
 from Ant import Ant
 import time
 import pickle
+from os import path
 
-dataM=readData('solomon_r101.txt')
+dataM=readData('Input/solomon_r101.txt')
+
 distM=createDistanceMatrix(dataM)
 
 #print(dataM[1])
@@ -24,14 +26,14 @@ ant0=Ant(vehicleCount=vehicleNumber,dataM=dataM)
 bestSolution=ant0.calculate(dataM,distM,phiM1,feasLocIN1,2)
 
 iteration=0
-while iteration <100:
+while iteration <200:
     #print('iteration number',antCount
     
     #solution 1 is looking for a valid solution with fewer number of vehicles
     ant1=Ant(vehicleCount=vehicleNumber-1,dataM=dataM)
     solution1=ant1.calculate(dataM,distM,phiM1,feasLocIN1,2)
        
-    if solution1['visitedCount']==101:
+    if solution1['visitedCount']==100:
         vehicleNumber-=1
         
         phiM2=createPheromoneMatix(size=len(distM),distance=1888)
@@ -63,6 +65,7 @@ while iteration <100:
             print('Vehicle count is:',solution1['vehicleCount'])
             print('Visited count is:',solution1['visitedCount'])
             print('Distance traveled is:',solution1['distance'])
+            print('Current Iteration is:',iteration)
             print('')
             print('')
             #time.sleep(2)
@@ -72,7 +75,7 @@ while iteration <100:
     ant2=Ant(vehicleCount=vehicleNumber,dataM=dataM)
     solution2=ant2.calculate(dataM,distM,phiM2,feasLocIN2,2)
     
-    if solution2['visitedCount']==101:
+    if solution2['visitedCount']==100:
 
         #update pheromones
         for vehicle in solution2['vehicles']:
@@ -111,18 +114,18 @@ print('we are done')
 
 
 
-'''
-txtFile = open('Output.txt', 'w')
+BS_Path=path.relpath('Output/BestSolution.txt')
+txtFile = open(BS_Path, 'w')
 txtFile.write('Vehicle Log\n\n')
 txtFile.close()
 
-txtFile = open("Output.txt","a")
-for index,vehicle in enumerate(solution['vehicles']):
+txtFile = open(BS_Path,"a")
+for index,vehicle in enumerate(bestSolution['vehicles']):
     txtFile.write('Vehicle\t')
     txtFile.write(str(index+1))
     txtFile.write('\ttour:\t')
     txtFile.write(str(vehicle['tour']))
     txtFile.write('\n')
 txtFile.close()
-'''
+
 
