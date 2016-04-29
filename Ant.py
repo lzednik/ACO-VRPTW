@@ -28,28 +28,16 @@ class Ant:
                 attr2=sumAttr/initAttract[loc]
                 initAttract2[loc]=int(attr2)
 
-            #print(initAttract2[0])
-            #print(initAttract2[18])
-            #print(initAttract2[19])
-            #print('')
-            
-            #print('readytime')
-            #print(dataM[0]['ready_time'])
-            #print(dataM[18]['ready_time'])
-            #print(dataM[19]['ready_time'])
-            #print('')
-            
-            #print('duetime')
-            #print(dataM[0]['due_time'])
-            #print(dataM[18]['due_time'])
-            #print(dataM[19]['due_time'])
-            #print('')
-            
+            cutofList=[]
+            for x in range(len(initAttract2)):
+                cutofList+=(len(initAttract2)-x)*[x+1]
+                cutoff=choice(cutofList)
 
-            #time.sleep(10)
+            initAttract3 = sorted(initAttract2, key=initAttract2.get, reverse=True)[:cutoff]
+                
             initProbList=[]
-            for loc in initAttract2:
-              initProbList+=int(initAttract2[loc])*[loc]
+            for loc in initAttract3:
+                initProbList+=int(initAttract2[loc])*[loc]
             
             firstLoc=choice(initProbList)
 
