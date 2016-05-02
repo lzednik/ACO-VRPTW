@@ -41,19 +41,6 @@ class Ant:
             
             firstLoc=choice(initProbList)
 
-            #print out probabilities
-            PI_Path=path.relpath('Output/ProbsInit.txt')
-            pifile=open(PI_Path,'a')
-            pifile.write('vehicle\t')
-            pifile.write(str(veh))
-            pifile.write('\n')
-            for loc in initAttract2:
-                pifile.write(str(loc))
-                pifile.write('\t')
-                pifile.write(str(initAttract2[loc]))
-                pifile.write('\n')
-            pifile.write('\n\n\n')
-            pifile.close()
             
             #print('Our first stop is going to be',firstLoc)
             #time.sleep(10)
@@ -126,21 +113,6 @@ class Ant:
                         eta=1/distance2
                         attractivness[feasableLoc]=eta
                         
-                        #if eta>0.9:
-                        #    print('eta is:\t',eta)
-                        #    
-                        #    txtFile = open("Output2.txt","a")
-                        #    txtFile.write('eta is\t')
-                        #    txtFile.write(str(eta))
-                        #    txtFile.write('\nIN\t')
-                        #    txtFile.write(str(feasLocIN[feasableLoc]))
-                        #    txtFile.write('\ndistance\t')
-                        #    txtFile.write(str(distance))
-
-                        #    
-                        #    txtFile.close()
-                        #    time.sleep(5)
-                        #    sys.exit()
 
 
                     bottomSum=0
@@ -151,12 +123,23 @@ class Ant:
                     minProb=1
                     for attr in attractivness:
                         probs[attr]=(phiM[vehicle['currPos']][attr]*(attractivness[attr]**beta))/bottomSum
+                        #print('phi:\t',phiM[vehicle['currPos']][attr],'attr',attractivness[attr])
                         if probs[attr]<minProb:
                             minProb=probs[attr]
+
+                    #time.sleep(3)
+                    #here
+                    cutofList=[]
+                    for x in range(len(attractivness)):
+                        cutofList+=(len(attractivness)-x)*[x+1]
+                    cutoff=choice(cutofList)
+
+                    probs2 = sorted(probs, key=probs.get, reverse=True)[:cutoff]
                     
+
                     #probabilities of selection based on attractivness
                     probList=[]
-                    for prob in probs:
+                    for prob in probs2:
                         try:
                             probList+=int(probs[prob]/minProb)*[prob]
                         except:
@@ -198,8 +181,7 @@ class Ant:
 
                     #need to update vehicle and log the visit
                     vehicle['tour'].append(nextLoc)
-                    if nextLoc != 0:
-                        self.visited.append(nextLoc)
+                    self.visited.append(nextLoc)
                     self.distance+=distM[vehicle['currPos']][nextLoc]
                     vehicle['time']=vehicle['time']+max(distM[vehicle['currPos']][nextLoc],dataM[nextLoc]['ready_time'])+dataM[dataItem]['service_time']
                     feasLocIN[nextLoc]+=1

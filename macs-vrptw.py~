@@ -23,15 +23,24 @@ feasLocIN2=len(distM)*[0]
 vehicleNumber=60
 
 ant0=Ant(vehicleCount=vehicleNumber,dataM=dataM)
-bestSolution=ant0.calculate(dataM,distM,phiM1,feasLocIN1,2)
+bestSolution=ant0.calculate(dataM,distM,phiM1,feasLocIN1,1)
+
+#getting ready phi matrix file
+TF_Path=path.relpath('Output/Phi.txt')
+            
+tf=open(TF_Path,'w')
+tf.write('phi matrix:\n\n')
+tf.close()
+#phi m write
+
 
 iteration=0
-while iteration <200:
+while iteration <500:
     #print('iteration number',antCount
     
     #solution 1 is looking for a valid solution with fewer number of vehicles
     ant1=Ant(vehicleCount=vehicleNumber-1,dataM=dataM)
-    solution1=ant1.calculate(dataM,distM,phiM1,feasLocIN1,2)
+    solution1=ant1.calculate(dataM,distM,phiM1,feasLocIN1,1)
        
     if solution1['visitedCount']==100:
         vehicleNumber-=1
@@ -73,7 +82,7 @@ while iteration <200:
 
     #solution two is looking for a shorter distance
     ant2=Ant(vehicleCount=vehicleNumber,dataM=dataM)
-    solution2=ant2.calculate(dataM,distM,phiM2,feasLocIN2,2)
+    solution2=ant2.calculate(dataM,distM,phiM2,feasLocIN2,1)
     
     if solution2['visitedCount']==100:
 
@@ -101,6 +110,14 @@ while iteration <200:
             print('')
             print('')
             #time.sleep(2)
+            
+            tf=open(TF_Path,'a')
+            for ph in phiM1:
+                for ph2 in ph:
+                        tf.write(str(ph2))
+                        tf.write('\n')
+                tf.write('\n\n')
+            tf.close()
             
             #pickle to save best solution to play with somewhere else
             #file_name='best_solution'+str(iteration)
