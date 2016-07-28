@@ -116,8 +116,8 @@ class Ant:
 
 
                     bottomSum=0
-                    for attr in attractivness:
-                        bottomSum+=(phiM[vehicle['currPos']][attr]*(attractivness[attr]**beta)) 
+                    for loc in attractivness:
+                        bottomSum+=(phiM[vehicle['currPos']][loc]*(attractivness[loc]**beta)) 
 
                     probs={}
                     minProb=1

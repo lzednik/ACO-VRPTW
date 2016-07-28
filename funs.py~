@@ -48,7 +48,8 @@ def createDistanceMatrix(dataM):
 
 #creates the pheromones matrix
 def createPheromoneMatix(size,distance):
-    phi=1/(size*distance)
+    #phi=1/(size*distance) perhaps this should change back to size time distance which is in the paper
+    phi=1/distance
     phiLine=size*[phi]
     phiMatrix=size*[phiLine]
     return phiMatrix

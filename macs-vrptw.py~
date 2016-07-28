@@ -30,12 +30,12 @@ TF_Path=path.relpath('Output/Phi.txt')
             
 tf=open(TF_Path,'w')
 tf.write('phi matrix:\n\n')
-tf.close()
+
 #phi m write
 
 
 iteration=0
-while iteration <500:
+while iteration <200:
     #print('iteration number',antCount
     
     #solution 1 is looking for a valid solution with fewer number of vehicles
@@ -91,7 +91,7 @@ while iteration <500:
             for index in range(0,len(vehicle['tour'])-1):
                 fromLoc=vehicle['tour'][index]
                 toLoc=vehicle['tour'][index+1]
-                phiM2[fromLoc][toLoc]=(1-0.1)*phiM2[fromLoc][toLoc]+0.1/solution2['distance']
+                phiM2[fromLoc][toLoc]=(1-0.3)*phiM2[fromLoc][toLoc]+0.3/solution2['distance']
             
         bsChange=False
         if bestSolution['distance']>solution2['distance']:
@@ -110,22 +110,31 @@ while iteration <500:
             print('')
             print('')
             #time.sleep(2)
+           
             
-            tf=open(TF_Path,'a')
-            for ph in phiM1:
-                for ph2 in ph:
-                        tf.write(str(ph2))
-                        tf.write('\n')
-                tf.write('\n\n')
-            tf.close()
+
+            #for ph in phiM1:
+            #    for ph2 in ph:
+            #            tf.write(str(ph2))
+            #            tf.write('\n')
+            #    tf.write('\n\n')
             
             #pickle to save best solution to play with somewhere else
             #file_name='best_solution'+str(iteration)
             #fileObject =open(file_name,'wb')
             #pickle.dump(bestSolution,fileObject)
             #fileObject.close()
-            
+    tf.write('iteration:\t')
+    tf.write(str(iteration))
+    tf.write('\t')
+    tf.write('phi 2-73:\t')
+    tf.write (str(phiM1[2][73]))
+    tf.write('\n')
+
     iteration+=1
+
+
+tf.close()
 
 print('we are done')
 
@@ -134,9 +143,7 @@ print('we are done')
 BS_Path=path.relpath('Output/BestSolution.txt')
 txtFile = open(BS_Path, 'w')
 txtFile.write('Vehicle Log\n\n')
-txtFile.close()
 
-txtFile = open(BS_Path,"a")
 for index,vehicle in enumerate(bestSolution['vehicles']):
     txtFile.write('Vehicle\t')
     txtFile.write(str(index+1))
@@ -144,5 +151,9 @@ for index,vehicle in enumerate(bestSolution['vehicles']):
     txtFile.write(str(vehicle['tour']))
     txtFile.write('\n')
 txtFile.close()
+
+
+
+
 
 
