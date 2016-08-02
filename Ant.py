@@ -12,51 +12,28 @@ class Ant:
         self.distance=0
         self.time=0
         self.solution={'vehicles':[],'vehicleCount':vehicleCount,'visitedCount':0,'distance':0}
-        for veh in range(vehicleCount):
-            #need to figure out where the starting point is going to be for each vehicle
-            initAttract={}
-            sumAttr=0
-            for loc in range(len(dataM)):
-                if loc not in self.visited and loc !=0:
-                    attr=dataM[loc]['ready_time']*dataM[loc]['due_time']
-                    initAttract[loc]=attr
-                    sumAttr+=attr
-            
+        
+        
+    def calculate(self,dataM,distM,phiM,feasLocIN,beta):
+       #initial location for all vehicles:
+        initLocAtt={}
+        for custData in dataM:
+            initLocAtt[custData['cust_no']-1]=custData['due_time']
+        ilaS=sum(initLocAtt.values())
 
-            initAttract2={}
-            for loc in initAttract:
-                attr2=sumAttr/initAttract[loc]
-                initAttract2[loc]=int(attr2)
+        weights={}
+        probs=[]
+        for loc in initLocAtt:
+            weights[loc]=int(ilaS/initLocAtt[loc])
+            probs+=weights[loc]*[loc]
+        
+        firstLoc=choice(probs)
+        print(firstLoc)
+         
 
-            cutofList=[]
-            for x in range(len(initAttract2)):
-                cutofList+=(len(initAttract2)-x)*[x+1]
-                cutoff=choice(cutofList)
 
-            initAttract3 = sorted(initAttract2, key=initAttract2.get, reverse=True)[:cutoff]
-                
-            initProbList=[]
-            for loc in initAttract3:
-                initProbList+=int(initAttract2[loc])*[loc]
-            
-            firstLoc=choice(initProbList)
-
-            
-            #print('Our first stop is going to be',firstLoc)
-            #time.sleep(10)
-            self.vehicles.append({'tour':[firstLoc],
-                                  'currPos':firstLoc,
-                                  'time':dataM[firstLoc]['ready_time']+dataM[firstLoc]['service_time']})
-            
-            self.visited.append(firstLoc)
-            #for veh in self.vehicles:
-            #    print(veh)
-            #    time.sleep(1)
-            #print('')
-            #print('this is all vehs')
-            #time.sleep(5)
     #calculates trips for all vehicles for one ant
-    def calculate(self,dataM,distM,phiM,feasLocIN,beta): 
+    def calculate2(self,dataM,distM,phiM,feasLocIN,beta): 
         prevVisitedCount=-1
         while self.solution['visitedCount']<100 and prevVisitedCount != self.solution['visitedCount']:
             #print('visited count is',self.solution['visitedCount'])

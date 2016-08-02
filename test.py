@@ -1,30 +1,35 @@
-#just testing things here
-
-from graphics import *
-from time import *
-from funs import *
-
-win=GraphWin('Ant Output',1300,600)
-win.setCoords(0,0,1300,600)
-        
-#ln1 = Line(Point(1, 10), Point(600, 600))
-#ln1.setWidth(3)
-#ln1.setFill("red")
-#ln1.draw(win)
-
-dataM=readData('solomon_r101.txt')
-
-for dt in dataM:
-    pt=Point(8*dt['xcoord'], 8*dt['ycoord'])
-    cir=Circle(pt,5)
-    cir.setOutline('red')
-    cir.setFill('red')
-    cir.draw(win)
-
-sleep(5)
-win.clear
-win.getMouse()
-win.close()
+from random import choice
+from collections import Counter
+locs={  '0':10,
+        '1': 3,
+        '2':15,
+        '3':2,
+        '4':7,
+        '5':8,
+        '6':31,
+        '7':3,
+        '8':12,
+        '9':1}
 
 
+s=sum(locs.values())
+
+weights={}
+probs=[]
+for loc in locs:
+    weights[loc]=int(s/locs[loc])
+    probs+=weights[loc]*[loc]
+
+
+
+x=0
+flist=[]
+while x<100:
+    x+=1
+    flist.append(choice(probs))
+
+ct=Counter(flist)
+
+for item in ct:
+    print(item,ct[item])
 
