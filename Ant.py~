@@ -13,23 +13,94 @@ class Ant:
         self.time=0
         self.solution={'vehicles':[],'vehicleCount':vehicleCount,'visitedCount':0,'distance':0}
         
-        
-    def calculate(self,dataM,distM,phiM,feasLocIN,beta):
-       #initial location for all vehicles:
-        initLocAtt={}
-        for custData in dataM:
-            initLocAtt[custData['cust_no']-1]=custData['due_time']
-        ilaS=sum(initLocAtt.values())
+        for veh in range(self.vehicleCount):
+            self.vehicles.append({  'vehNum':veh+1,
+                                    'tour':[],
+                                    'currPos':0,
+                                    'time':150})
 
-        weights={}
-        probs=[]
-        for loc in initLocAtt:
-            weights[loc]=int(ilaS/initLocAtt[loc])
-            probs+=weights[loc]*[loc]
+
+    def calculate(self,dataM,distM,phiM,feasLocIN,beta):
+        for vehicle in self.vehicles:
+            #feasable locs
+            feasLocs=[]
+            for loc in range(len(dataM)):
+                if vehicle['time']+distM[vehicle['currPos']][loc]<=dataM[loc]['ready_time']:
+                    feasLocs.append(loc)
+            #attractivness of feasable locs
+            attractL={}
+            for feasLoc in feasLocs:
+                distanceToFeasLoc=distM[vehicle['currPos']][feasLoc]
+                feasLocReadyTime=dataM[feasLoc]['ready_time']
+                feasLocDueTime=dataM[feasLoc]['due_time']
+                delivery_time=max(vehicle['time']+distanceToFeasLoc,feasLocReadyTime)
+                delta_time=delivery_time-vehicle['time']
+                attr0=delta_time*(feasLocDueTime-vehicle['time'])
+                attr=max(1,attr0+feasLocIN[feasLoc])
+                attr2=phiM[vehicle['currPos']][loc]*attr
+                attractL[feasLoc]=attr2
+            #print(attractL)
+            minAttr=min(attractL.values())
+           
+            
+            #attractL={}
+            for attr in attractL:
+                attractL[attr]=int(100*attractL[attr]/minAttr)
+            
+            txtFile=open('Output/Attract.txt','w')
+            for rec in attractL:
+                txtFile.write(str(rec))
+                txtFile.write('\t')
+                txtFile.write(str(attractL[rec]))
+                txtFile.write('\n')
+            txtFile.write(str(minAttr))
+            txtFile.close()
+
+           
+               #print('feasloc:\t',feasLoc,'attr:\t',attr,'attr2:\t',attr2)
+                        #eta=1/distance2
+                        #attractivness[feasableLoc]=eta
+                        
+
+
+
+
+
+
+
+
+    # 'time':dataM[firstLoc]['ready_time']+dataM[firstLoc]['service_time']})
         
-        firstLoc=choice(probs)
-        print(firstLoc)
-         
+#    def calculate2(self,dataM,distM,phiM,feasLocIN,beta):
+#        for veh in range(self.vehicleCount):
+#            #initial location for all vehicles:
+#            initLocAtt={}
+#            for custData in dataM:
+#                if custData['cust_no']-1 not in self.visited:
+#                    initLocAtt[custData['cust_no']-1]=custData['due_time']
+#            ilaS=sum(initLocAtt.values())
+#
+#            weights={}
+#            weightsList=[]
+#            for loc in initLocAtt:
+#                weights[loc]=int(ilaS/initLocAtt[loc])
+#                weightsList+=weights[loc]*[loc]
+#            
+#            firstLoc=choice(weightsList)
+#            self.visited.append(firstLoc)
+#            #end initial location for all vehicles
+            
+
+
+#            txtFile=open('Output/Solution.txt','w')
+#            for veh in self.vehicles:
+#                txtFile.write(str(veh))
+#                txtFile.write('\n')
+#            txtFile.close()
+        
+
+        
+
 
 
     #calculates trips for all vehicles for one ant
