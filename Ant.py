@@ -1,6 +1,7 @@
 from random import choice
 import time,sys
 from os import path
+from collections import Counter
 
 #class Ant
 
@@ -8,54 +9,83 @@ class Ant:
     def __init__(self,vehicleCount,dataM):
         self.vehicleCount=vehicleCount
         self.vehicles=[]
-        self.visited=[]
+        self.visited=[0]
         self.distance=0
         self.time=0
         self.solution={'vehicles':[],'vehicleCount':vehicleCount,'visitedCount':0,'distance':0}
         
         for veh in range(self.vehicleCount):
             self.vehicles.append({  'vehNum':veh+1,
-                                    'tour':[],
+                                    'tour':[0],
                                     'currPos':0,
-                                    'time':150})
-
+                                    'time':0})
 
     def calculate(self,dataM,distM,phiM,feasLocIN,beta):
         for vehicle in self.vehicles:
-            #feasable locs
-            feasLocs=[]
-            for loc in range(len(dataM)):
-                if vehicle['time']+distM[vehicle['currPos']][loc]<=dataM[loc]['ready_time']:
-                    feasLocs.append(loc)
-            #attractivness of feasable locs
-            attractL={}
-            for feasLoc in feasLocs:
-                distanceToFeasLoc=distM[vehicle['currPos']][feasLoc]
-                feasLocReadyTime=dataM[feasLoc]['ready_time']
-                feasLocDueTime=dataM[feasLoc]['due_time']
-                delivery_time=max(vehicle['time']+distanceToFeasLoc,feasLocReadyTime)
-                delta_time=delivery_time-vehicle['time']
-                attr0=delta_time*(feasLocDueTime-vehicle['time'])
-                attr=max(1,attr0+feasLocIN[feasLoc])
-                attr2=phiM[vehicle['currPos']][loc]*attr
-                attractL[feasLoc]=attr2
-            #print(attractL)
-            minAttr=min(attractL.values())
-           
-            
-            #attractL={}
-            for attr in attractL:
-                attractL[attr]=int(100*attractL[attr]/minAttr)
-            
-            txtFile=open('Output/Attract.txt','w')
-            for rec in attractL:
-                txtFile.write(str(rec))
-                txtFile.write('\t')
-                txtFile.write(str(attractL[rec]))
-                txtFile.write('\n')
-            txtFile.write(str(minAttr))
-            txtFile.close()
 
+            flocs=True
+            while flocs==True:
+                #feasable locs
+                feasLocs=[]
+                for loc in range(len(dataM)):
+                    if loc not in self.visited and vehicle['time']+distM[vehicle['currPos']][loc]<=dataM[loc]['ready_time']:
+                        feasLocs.append(loc)
+                
+                if feasLocs:
+                    #attractivness of feasable locs
+                    attractL={}
+                    for feasLoc in feasLocs:
+                        distanceToFeasLoc=distM[vehicle['currPos']][feasLoc]
+                        feasLocReadyTime=dataM[feasLoc]['ready_time']
+                        feasLocDueTime=dataM[feasLoc]['due_time']
+                        delivery_time=max(vehicle['time']+distanceToFeasLoc,feasLocReadyTime)
+                        delta_time=delivery_time-vehicle['time']
+                        attr0=delta_time*(feasLocDueTime-vehicle['time'])
+                        attr=max(1,attr0+feasLocIN[feasLoc])
+                        attr2=phiM[vehicle['currPos']][loc]*attr
+                        attractL[feasLoc]=attr2
+                    minAttr=min(attractL.values())
+                   
+                    choiceList=[]
+                    for loc in attractL:
+                        attractL[loc]=int(100*attractL[loc]/minAttr)
+                        choiceList+=attractL[loc]*[loc]
+
+                    nextLoc=choice(choiceList)
+                       
+                    self.visited.append(nextLoc)
+                    vehicle['tour'].append(nextLoc)
+                    vehicle['currPos']=nextLoc
+                    vehicle['time']=dataM[nextLoc]['due_time']
+                else:
+                    flocs=False
+        
+            for loc in range(len(dataM)):
+                if loc not in self.visited:
+                    for vehicle in self.vehicles:
+                        for tpos in range(len(vehicle['tour'])-1):
+                            tpos1=vehicle['tour'][tpos]
+                            tpos2=vehicle['tour'][tpos+1]
+                            
+                            if (dataM[tpos1]['ready_time']+dataM[tpos1]['service_time']+distM[tpos1][loc] < dataM[loc]['ready_time'] and
+                                dataM[loc]['ready_time']+dataM[loc]['service_time']+distM[loc][tpos2] < dataM[tpos2]['ready_time']):
+                                vehicle['tour'].insert(tpos+1,loc)
+                                self.visited.append(loc)
+
+        #for vehicle in self.vehicles:
+        #    print('vehNum:\t',vehicle['vehNum'],'\ttour\t',vehicle['tour'])
+        print('visited', len(self.visited))
+    
+    
+    #            txtFile=open('Output/Attract.txt','w')
+    #            for rec in attractL:
+    #                txtFile.write(str(rec))
+    #                txtFile.write('\t')
+    #                txtFile.write(str(attractL[rec]))
+    #                txtFile.write('\n')
+    #            txtFile.write(str(minAttr))
+    #            txtFile.close()
+    #
            
                #print('feasloc:\t',feasLoc,'attr:\t',attr,'attr2:\t',attr2)
                         #eta=1/distance2

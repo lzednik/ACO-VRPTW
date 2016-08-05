@@ -24,10 +24,11 @@ feasLocIN1=len(distM)*[0]
 vehicleNumber=60
 
 ant0=Ant(vehicleCount=vehicleNumber,dataM=dataM)
-bestSolution=ant0.calculate(dataM,distM,phiM1,feasLocIN1,1)
+
+for i in range(100):
+    bestSolution=ant0.calculate(dataM,distM,phiM1,feasLocIN1,1)
 
 print('all done')
-
 #iteration=0
 #while iteration <200:
     
