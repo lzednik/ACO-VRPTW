@@ -41,7 +41,7 @@ def createDistanceMatrix(dataM):
         locFromDist=[]
         for locTo in dataM:
             coordTo=(locTo['xcoord'],locTo['ycoord'])
-            locFromDist.append(distance.euclidean(coordFrom,coordTo))
+            locFromDist.append(int(distance.euclidean(coordFrom,coordTo)))
 
         distM.append(locFromDist)
     return(distM)

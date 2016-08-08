@@ -12,15 +12,22 @@ class Ant:
         self.visited=[0]
         self.distance=0
         self.time=0
-        self.solution={'vehicles':[],'vehicleCount':vehicleCount,'visitedCount':0,'distance':0}
+        self.solution={'vehicles':[],'visited':[],'vehicleCount':vehicleCount,'visitedCount':0,'distance':0}
         
+        
+    def calculate(self,dataM,distM,phiM,feasLocIN,beta):
+        #reset
+        self.visited=[0]
+        self.distance=0
+        self.time=0
+        self.vehicles=[]
         for veh in range(self.vehicleCount):
             self.vehicles.append({  'vehNum':veh+1,
                                     'tour':[0],
                                     'currPos':0,
                                     'time':0})
 
-    def calculate(self,dataM,distM,phiM,feasLocIN,beta):
+
         for vehicle in self.vehicles:
 
             flocs=True
@@ -59,23 +66,27 @@ class Ant:
                     vehicle['time']=dataM[nextLoc]['due_time']
                 else:
                     flocs=False
-        
-            for loc in range(len(dataM)):
-                if loc not in self.visited:
-                    for vehicle in self.vehicles:
-                        for tpos in range(len(vehicle['tour'])-1):
-                            tpos1=vehicle['tour'][tpos]
-                            tpos2=vehicle['tour'][tpos+1]
-                            
-                            if (dataM[tpos1]['ready_time']+dataM[tpos1]['service_time']+distM[tpos1][loc] < dataM[loc]['ready_time'] and
-                                dataM[loc]['ready_time']+dataM[loc]['service_time']+distM[loc][tpos2] < dataM[tpos2]['ready_time']):
-                                vehicle['tour'].insert(tpos+1,loc)
-                                self.visited.append(loc)
 
-        #for vehicle in self.vehicles:
-        #    print('vehNum:\t',vehicle['vehNum'],'\ttour\t',vehicle['tour'])
-        print('visited', len(self.visited))
-    
+            #try inserting unassigned locs
+#            print('visited before',len(self.visited)) 
+#            for loc in range(len(dataM)):
+#                if loc not in self.visited:
+#                    for vehicle in self.vehicles:
+#                        for tpos in range(len(vehicle['tour'])-1):
+#                            tpos1=vehicle['tour'][tpos]
+#                            tpos2=vehicle['tour'][tpos+1]
+#                            
+#                            if (dataM[tpos1]['ready_time']+dataM[tpos1]['service_time']+distM[tpos1][loc] < dataM[loc]['ready_time'] and
+#                                dataM[loc]['ready_time']+dataM[loc]['service_time']+distM[loc][tpos2] < dataM[tpos2]['ready_time']):
+#                                vehicle['tour'].insert(tpos+1,loc)
+#                                self.visited.append(loc)
+#
+        
+        #create solution
+        self.solution['vehicles']=self.vehicles
+        self.solution['visited']=self.visited
+        self.solution['visitedCount']=len(self.visited)
+        return self.solution
     
     #            txtFile=open('Output/Attract.txt','w')
     #            for rec in attractL:
