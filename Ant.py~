@@ -13,7 +13,7 @@ class Ant:
         self.distance=0
         self.time=0
         self.solution={'vehicles':[],'visited':[],'vehicleCount':vehicleCount,'visitedCount':0,'distance':0}
-        
+        self.locLog={0:{'start_time':0,'end_time':0}}        
         
     def calculate(self,dataM,distM,phiM,feasLocIN,beta):
         #reset
@@ -61,28 +61,48 @@ class Ant:
                     nextLoc=choice(choiceList)
                        
                     self.visited.append(nextLoc)
+                   
+                    start_time=max(vehicle['time']+distM[vehicle['currPos']][nextLoc],dataM[nextLoc]['ready_time'])
+                    end_time=max(vehicle['time']+distM[vehicle['currPos']][nextLoc],dataM[nextLoc]['ready_time'])+dataM[nextLoc]['service_time']
+
+                    self.locLog[nextLoc]={'start_time':start_time,
+                                          'end_time':end_time
+                                         }
+                    
                     vehicle['tour'].append(nextLoc)
+                    vehicle['time']=end_time
                     vehicle['currPos']=nextLoc
-                    vehicle['time']=dataM[nextLoc]['due_time']
+                    
+
+
                 else:
                     flocs=False
 
             #try inserting unassigned locs
-#            print('visited before',len(self.visited)) 
-#            for loc in range(len(dataM)):
-#                if loc not in self.visited:
-#                    for vehicle in self.vehicles:
-#                        for tpos in range(len(vehicle['tour'])-1):
-#                            tpos1=vehicle['tour'][tpos]
-#                            tpos2=vehicle['tour'][tpos+1]
-#                            
+            for loc in range(len(dataM)):
+                if loc not in self.visited:
+                    for vehicle in self.vehicles:
+                        for tpos in range(len(vehicle['tour'])-1):
+                            tpos1=vehicle['tour'][tpos]
+                            tpos2=vehicle['tour'][tpos+1]
+                            
+                            nLoc_st=max(self.locLog[tpos1]['end_time']+distM[tpos1][loc],dataM[loc]['ready_time'])
+                            nLoc_et=nLoc_st+dataM[loc]['service_time']
+
+                            if (self.locLog[tpos1]['end_time']+distM[tpos1][loc]+dataM[loc]['service_time']<=dataM[loc]['due_time'] and
+                                    nLoc_et<=self.locLog[tpos2]['start_time']):
+                                vehicle['tour'].insert(tpos+1,loc)
+                                self.visited.append(loc)
+                                self.locLog[loc]={'start_time':nLoc_st,
+                                          'end_time':nLoc_et
+                                         }
+                    
 #                            if (dataM[tpos1]['ready_time']+dataM[tpos1]['service_time']+distM[tpos1][loc] < dataM[loc]['ready_time'] and
 #                                dataM[loc]['ready_time']+dataM[loc]['service_time']+distM[loc][tpos2] < dataM[tpos2]['ready_time']):
-#                                vehicle['tour'].insert(tpos+1,loc)
-#                                self.visited.append(loc)
-#
+                                
         
-        #create solution
+       #create solution
+
         self.solution['vehicles']=self.vehicles
         self.solution['visited']=self.visited
         self.solution['visitedCount']=len(self.visited)
