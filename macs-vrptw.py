@@ -53,8 +53,39 @@ for i in range(100):
         print('')
 
 
+#write results for checking
+txtFile=open('Output/Results.txt','w')
 for vehicle in bestSolution['vehicles']:
     print(vehicle['tour'])
+    txtFile.write(str(vehicle['tour']))
+    txtFile.write('\n\n')
+    
+    for pos in range(len(vehicle['tour'])):
+        loc=vehicle['tour'][pos]           
+        if pos<len(vehicle['tour'])-1:
+            nloc=vehicle['tour'][pos+1]  
+        txtFile.write('loc:\t')
+        txtFile.write(str(loc))
+        txtFile.write('\tready_time:\t')
+        txtFile.write(str(dataM[loc]['ready_time']))
+        txtFile.write('\tservice_time"\t')
+        txtFile.write(str(dataM[loc]['service_time']))
+        txtFile.write('\tdue_time"\t')
+        txtFile.write(str(dataM[loc]['due_time']))
+        if pos<len(vehicle['tour'])-1:
+            txtFile.write('\tdist to next"\t')
+            txtFile.write(str(distM[loc][nloc]))
+        txtFile.write('\n')
+
+    txtFile.write('*******************************************\n\n')
+
+txtFile.close()
+           
+
+
+
+
+
 print('all done')
 #iteration=0
 #while iteration <200:

@@ -63,8 +63,8 @@ class Ant:
                     self.visited.append(nextLoc)
                    
                     start_time=max(vehicle['time']+distM[vehicle['currPos']][nextLoc],dataM[nextLoc]['ready_time'])
-                    end_time=max(vehicle['time']+distM[vehicle['currPos']][nextLoc],dataM[nextLoc]['ready_time'])+dataM[nextLoc]['service_time']
-
+                    end_time=start_time+dataM[nextLoc]['service_time']
+                    
                     self.locLog[nextLoc]={'start_time':start_time,
                                           'end_time':end_time
                                          }
@@ -90,13 +90,13 @@ class Ant:
                             nLoc_et=nLoc_st+dataM[loc]['service_time']
 
                             if (self.locLog[tpos1]['end_time']+distM[tpos1][loc]+dataM[loc]['service_time']<=dataM[loc]['due_time'] and
-                                    nLoc_et<=self.locLog[tpos2]['start_time']):
+                                    nLoc_et+distM[loc][tpos2]<=self.locLog[tpos2]['start_time']):
                                 vehicle['tour'].insert(tpos+1,loc)
                                 self.visited.append(loc)
                                 self.locLog[loc]={'start_time':nLoc_st,
                                           'end_time':nLoc_et
                                          }
-                    
+                            
 #                            if (dataM[tpos1]['ready_time']+dataM[tpos1]['service_time']+distM[tpos1][loc] < dataM[loc]['ready_time'] and
 #                                dataM[loc]['ready_time']+dataM[loc]['service_time']+distM[loc][tpos2] < dataM[tpos2]['ready_time']):
                                 
@@ -106,6 +106,18 @@ class Ant:
         self.solution['vehicles']=self.vehicles
         self.solution['visited']=self.visited
         self.solution['visitedCount']=len(self.visited)
+
+        txtFile=open('Output/locLog.txt','w')
+        for loc in self.locLog:
+            txtFile.write('loc:\t')
+            txtFile.write(str(loc))
+            txtFile.write('\tstart_time:\t')
+            txtFile.write(str(self.locLog[loc]['start_time']))
+            txtFile.write('\tend_time\t')
+            txtFile.write(str(self.locLog[loc]['end_time']))
+            txtFile.write('\n')
+        txtFile.close()
+
         return self.solution
     
     #            txtFile=open('Output/Attract.txt','w')
