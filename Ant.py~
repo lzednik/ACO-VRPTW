@@ -48,7 +48,13 @@ class Ant:
                         delivery_time=max(vehicle['time']+distanceToFeasLoc,feasLocReadyTime)
                         delta_time=delivery_time-vehicle['time']
                         attr0=delta_time*(feasLocDueTime-vehicle['time'])
-                        attr=max(1,attr0+feasLocIN[feasLoc])
+                        
+                        inMax=max(feasLocIN[vehicle['currPos']])
+                        inLoc=feasLocIN[vehicle['currPos']][feasLoc]
+                        inPenalty=inMax/max(1,inLoc)
+                        attr=max(1,attr0*inPenalty)
+                        
+                        
                         attr2=phiM[vehicle['currPos']][loc]*attr
                         attractL[feasLoc]=attr2
                     minAttr=min(attractL.values())
@@ -68,7 +74,7 @@ class Ant:
                     self.locLog[nextLoc]={'start_time':start_time,
                                           'end_time':end_time
                                          }
-                    
+                    feasLocIN[vehicle['currPos']][nextLoc]+=1 
                     vehicle['tour'].append(nextLoc)
                     vehicle['time']=end_time
                     vehicle['currPos']=nextLoc

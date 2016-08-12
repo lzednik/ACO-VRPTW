@@ -16,17 +16,17 @@ txtFile.close()
 distM=createDistanceMatrix(dataM)
 
 phiM1=createPheromoneMatix(size=len(distM),distance=1888)
-feasLocIN1=len(distM)*[0]
+feasLocIN1= [[0 for i in range(locCount)] for j in range(locCount)]
 
-vehicleNumber=60
+
+vehicleNumber=30
 
 ant0=Ant(vehicleCount=vehicleNumber,dataM=dataM)
 
 
 for i in range(100):
     bestSolution=ant0.calculate(dataM,distM,phiM1,feasLocIN1,1)
-   
-
+    
     #evaporate all phis
     for px in range(len(phiM1)):
         for py in range(len(phiM1)):
@@ -56,7 +56,7 @@ for i in range(100):
 #write results for checking
 txtFile=open('Output/Results.txt','w')
 for vehicle in bestSolution['vehicles']:
-    print(vehicle['tour'])
+    #print(vehicle['tour'])
     txtFile.write(str(vehicle['tour']))
     txtFile.write('\n\n')
     
