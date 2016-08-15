@@ -52,7 +52,7 @@ class Ant:
                         inMax=max(feasLocIN[vehicle['currPos']])
                         inLoc=feasLocIN[vehicle['currPos']][feasLoc]
                         inPenalty=inMax/max(1,inLoc)
-                        attr=max(1,attr0*inPenalty)
+                        attr=max(1,attr0+inPenalty)
                         
                         
                         attr2=phiM[vehicle['currPos']][loc]*attr
@@ -84,28 +84,65 @@ class Ant:
                 else:
                     flocs=False
 
-            #try inserting unassigned locs
-            for loc in range(len(dataM)):
-                if loc not in self.visited:
-                    for vehicle in self.vehicles:
-                        for tpos in range(len(vehicle['tour'])-1):
-                            tpos1=vehicle['tour'][tpos]
-                            tpos2=vehicle['tour'][tpos+1]
-                            
-                            nLoc_st=max(self.locLog[tpos1]['end_time']+distM[tpos1][loc],dataM[loc]['ready_time'])
-                            nLoc_et=nLoc_st+dataM[loc]['service_time']
+        #try inserting unassigned locs
+        for loc in range(len(dataM)):
+            if loc not in self.visited:
+                for vehicle in self.vehicles:
+                    for tpos in range(len(vehicle['tour'])-1):
+                        tpos1=vehicle['tour'][tpos]
+                        tpos2=vehicle['tour'][tpos+1]
+                        
+                        nLoc_st=max(self.locLog[tpos1]['end_time']+distM[tpos1][loc],dataM[loc]['ready_time'])
+                        nLoc_et=nLoc_st+dataM[loc]['service_time']
 
-                            if (self.locLog[tpos1]['end_time']+distM[tpos1][loc]+dataM[loc]['service_time']<=dataM[loc]['due_time'] and
-                                    nLoc_et+distM[loc][tpos2]<=self.locLog[tpos2]['start_time']):
-                                vehicle['tour'].insert(tpos+1,loc)
-                                self.visited.append(loc)
-                                self.locLog[loc]={'start_time':nLoc_st,
-                                          'end_time':nLoc_et
-                                         }
+                        if (self.locLog[tpos1]['end_time']+distM[tpos1][loc]+dataM[loc]['service_time']<=dataM[loc]['due_time'] and
+                                nLoc_et+distM[loc][tpos2]<=self.locLog[tpos2]['start_time']):
+                            vehicle['tour'].insert(tpos+1,loc)
+                            self.visited.append(loc)
+                            self.locLog[loc]={'start_time':nLoc_st,
+                                      'end_time':nLoc_et
+                                     }
+                        
+        #try swapping locs
+        
+        minTL=1000
+        maxTL=0
+        for vehicle in self.vehicles:
+            if len(vehicle['tour'])>maxTL:
+                maxTL=len(vehicle['tour'])
+            if len(vehicle['tour'])<minTL:
+                minTL=len(vehicle['tour'])
+        
+        for tl in range(minTL,maxTL-1):
+            for vehicle1 in self.vehicles:
+                toRem=[]
+                if len(vehicle1['tour'])==tl and tl>0:
+                    for pos1 in range(1,len(vehicle1['tour'])):
+                        loc1=vehicle1['tour'][pos1]    
+                        for vehicle2 in self.vehicles:
+                            if len(vehicle['tour'])>tl:
+                                for tpos in range(len(vehicle2['tour'])-1):
+                                    tpos1=vehicle2['tour'][tpos]
+                                    tpos2=vehicle2['tour'][tpos+1]
+                        
+                                    nLoc_st=max(self.locLog[tpos1]['end_time']+distM[tpos1][loc1],dataM[loc1]['ready_time'])
+                                    nLoc_et=nLoc_st+dataM[loc1]['service_time']
+
+                                    if (self.locLog[tpos1]['end_time']+distM[tpos1][loc1]+dataM[loc]['service_time']<=dataM[loc1]['due_time'] and
+                                        nLoc_et+distM[loc1][tpos2]<=self.locLog[tpos2]['start_time']):
                             
-#                            if (dataM[tpos1]['ready_time']+dataM[tpos1]['service_time']+distM[tpos1][loc] < dataM[loc]['ready_time'] and
-#                                dataM[loc]['ready_time']+dataM[loc]['service_time']+distM[loc][tpos2] < dataM[tpos2]['ready_time']):
-                                
+                                        vehicle2['tour'].insert(tpos+1,loc1)
+                                        toRem.append(loc1)
+                                        
+                                        print('swapping',loc1)
+                                        self.locLog[loc1]={ 'start_time':nLoc_st,
+                                                            'end_time':nLoc_et
+                                                            }
+
+                    for locr in toRem:
+                        vehicle1['tour'].remove(locr)                    
+
+
         
        #create solution
 

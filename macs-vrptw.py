@@ -19,7 +19,7 @@ phiM1=createPheromoneMatix(size=len(distM),distance=1888)
 feasLocIN1= [[0 for i in range(locCount)] for j in range(locCount)]
 
 
-vehicleNumber=30
+vehicleNumber=35
 
 ant0=Ant(vehicleCount=vehicleNumber,dataM=dataM)
 
