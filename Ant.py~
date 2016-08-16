@@ -118,29 +118,30 @@ class Ant:
                 toRem=[]
                 if len(vehicle1['tour'])==tl and tl>0:
                     for pos1 in range(1,len(vehicle1['tour'])):
-                        loc1=vehicle1['tour'][pos1]    
+                        loc1=vehicle1['tour'][pos1]
                         for vehicle2 in self.vehicles:
                             if len(vehicle['tour'])>tl:
                                 for tpos in range(len(vehicle2['tour'])-1):
-                                    tpos1=vehicle2['tour'][tpos]
-                                    tpos2=vehicle2['tour'][tpos+1]
-                        
-                                    nLoc_st=max(self.locLog[tpos1]['end_time']+distM[tpos1][loc1],dataM[loc1]['ready_time'])
-                                    nLoc_et=nLoc_st+dataM[loc1]['service_time']
-
-                                    if (self.locLog[tpos1]['end_time']+distM[tpos1][loc1]+dataM[loc]['service_time']<=dataM[loc1]['due_time'] and
-                                        nLoc_et+distM[loc1][tpos2]<=self.locLog[tpos2]['start_time']):
+                                    if loc1 not in toRem:
+                                        tpos1=vehicle2['tour'][tpos]
+                                        tpos2=vehicle2['tour'][tpos+1]
                             
-                                        vehicle2['tour'].insert(tpos+1,loc1)
-                                        toRem.append(loc1)
-                                        
-                                        print('swapping',loc1)
-                                        self.locLog[loc1]={ 'start_time':nLoc_st,
-                                                            'end_time':nLoc_et
-                                                            }
+                                        nLoc_st=max(self.locLog[tpos1]['end_time']+distM[tpos1][loc1],dataM[loc1]['ready_time'])
+                                        nLoc_et=nLoc_st+dataM[loc1]['service_time']
 
-                    for locr in toRem:
-                        vehicle1['tour'].remove(locr)                    
+                                        if (self.locLog[tpos1]['end_time']+distM[tpos1][loc1]+dataM[loc]['service_time']<=dataM[loc1]['due_time'] and
+                                            nLoc_et+distM[loc1][tpos2]<=self.locLog[tpos2]['start_time']):
+                                
+                                            vehicle2['tour'].insert(tpos+1,loc1)
+                                            toRem.append(loc1)
+                                            
+                                            print('swapping',loc1)
+                                            self.locLog[loc1]={ 'start_time':nLoc_st,
+                                                                'end_time':nLoc_et
+                                                                }
+
+                for locr in toRem:
+                    vehicle1['tour'].remove(locr)                    
 
 
         
