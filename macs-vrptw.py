@@ -25,6 +25,9 @@ ant0=Ant(vehicleCount=vehicleNumber,dataM=dataM)
 
 
 for i in range(100):
+    if i%10 == 0:
+        print('Iteration:',i)
+
     bestSolution=ant0.calculate(dataM,distM,phiM1,feasLocIN1,1)
     
     #evaporate all phis
@@ -46,12 +49,12 @@ for i in range(100):
         vehicleNumber-=1
         ant0=Ant(vehicleCount=vehicleNumber,dataM=dataM)   
     
-       
+        print('****************************************')       
         print('iterationi:\t',i)
         print('veh count:\t',vehicleNumber+1)
         print('full solution:\t',bestSolution['visitedCount'])
+        print('****************************************')
         print('')
-
 
 #write results for checking
 txtFile=open('Output/Results.txt','w')
