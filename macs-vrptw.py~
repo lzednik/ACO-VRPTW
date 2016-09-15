@@ -24,12 +24,12 @@ vehicleNumber=35
 ant0=Ant(vehicleCount=vehicleNumber,dataM=dataM)
 
 
-for i in range(100):
-    if i%10 == 0:
-        print('Iteration:',i)
+for i in range(300):
+#    if i%10 == 0:
+#        print('Iteration:',i)
 
     bestSolution=ant0.calculate(dataM,distM,phiM1,feasLocIN1,1)
-    
+        
     #evaporate all phis
     for px in range(len(phiM1)):
         for py in range(len(phiM1)):
@@ -45,10 +45,10 @@ for i in range(100):
                 locFrom=vehicle['tour'][loc]
                 locTo=vehicle['tour'][loc+1]
                 phiM1[locFrom][locTo]=1.10*phiM1[locFrom][locTo]
-    
+
         vehicleNumber-=1
         ant0=Ant(vehicleCount=vehicleNumber,dataM=dataM)   
-    
+
         print('****************************************')       
         print('iterationi:\t',i)
         print('veh count:\t',vehicleNumber+1)

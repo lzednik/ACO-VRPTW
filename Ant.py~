@@ -39,8 +39,17 @@ class Ant:
                         feasLocs.append(loc)
                 
                 if feasLocs:
+                    #decision how to calculate attractivness
+                    m8b=10*[1]
+                    m8b2=3*[2]
+                    m8b3=1*[3]
+                    m8b.extend(m8b2)
+                    m8b.extend(m8b3)
+                    m8b_dec=choice(m8b)
+
                     #attractivness of feasable locs
                     attractL={}
+                    attractL0={}
                     for feasLoc in feasLocs:
                         distanceToFeasLoc=distM[vehicle['currPos']][feasLoc]
                         feasLocReadyTime=dataM[feasLoc]['ready_time']
@@ -49,19 +58,24 @@ class Ant:
                         delta_time=delivery_time-vehicle['time']
                         attr0=delta_time*(feasLocDueTime-vehicle['time'])
                         
-                        attr2=phiM[vehicle['currPos']][loc]*attr0
-                        attractL[feasLoc]=max(1,attr2)
-                   
+
+                        if m8b_dec==1:
+                            attr1=phiM[vehicle['currPos']][loc]*attr0
+                        if m8b_dec==2:
+                            attr1=attr0
+                        if m8b_dec==3:
+                            attr1=1
+                        
+                        attractL0[feasLoc]=attr1
+                    
+                    minAttr=min(attractL0.values())
+                    for loc in attractL0:
+                        attractL[loc]=int(attractL0[loc]/minAttr)
+                    
                     choiceList=[]
                     for loc in attractL:
                         choiceList+=int(attractL[loc])*[loc]
                     
-                    #print('feaselocs')
-                    #print(feasLocs)
-                    #print('attractL')
-                    #print(attractL)
-                    #print('choicelist')
-                    #print(choiceList)
                     nextLoc=choice(choiceList)
                        
                     self.visited.append(nextLoc)
@@ -101,9 +115,12 @@ class Ant:
                                 self.locLog[loc]={'start_time':nLoc_st,
                                           'end_time':nLoc_et
                                          }
-                            
+                                feasLocIN[tpos1][loc]+=1
+                                feasLocIN[loc][tpos2]+=1
+
+
         #try swapping locs
-        
+
 #        minTL=1000
 #        maxTL=0
 #        for vehicle in self.vehicles:
@@ -134,7 +151,7 @@ class Ant:
 #                                            vehicle2['tour'].insert(tpos+1,loc1)
 #                                            toRem.append(loc1)
 #                                            
-#                                            print('swapping',loc1)
+#                                            #print('swapping',loc1)
 #                                            self.locLog[loc1]={ 'start_time':nLoc_st,
 #                                                                'end_time':nLoc_et
 #                                                                }
@@ -142,8 +159,8 @@ class Ant:
 #                for locr in toRem:
 #                    vehicle1['tour'].remove(locr)                    
 #
-#
-        
+
+       
        #create solution
 
         self.solution['vehicles']=self.vehicles
@@ -292,6 +309,7 @@ class Ant:
                             minProb=probs[attr]
 
                     #time.sleep(3)
+                   
                     #here
                     cutofList=[]
                     for x in range(len(attractivness)):
