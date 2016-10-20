@@ -9,23 +9,33 @@ class Ant:
     def __init__(self,vehicleCount,dataM):
         self.vehicleCount=vehicleCount
         self.vehicles=[]
-        self.visited=[0]
+        self.visited=[]
         self.distance=0
         self.time=0
         self.solution={'vehicles':[],'visited':[],'vehicleCount':vehicleCount,'visitedCount':0,'distance':0}
-        self.locLog={0:{'start_time':0,'end_time':0}}        
-        
+        #self.locLog={0:{'start_time':0,'end_time':0}}        
+        self.locLog={}
+
     def calculate(self,dataM,distM,phiM,feasLocIN,beta):
         #reset
-        self.visited=[0]
+        self.visited=[]
         self.distance=0
         self.time=0
         self.vehicles=[]
+        
+        #initial location
+        ilD={}
+        for loc in range(len(dataM)):
+            ilD[loc]=dataM[loc]['due_time']
+        ilSL=sorted(ilD.items(), key=lambda x: x[1])
+
+        
         for veh in range(self.vehicleCount):
             self.vehicles.append({  'vehNum':veh+1,
-                                    'tour':[0],
-                                    'currPos':0,
+                                    'tour':[ilSL[veh][0]],
+                                    'currPos':ilSL[veh][0],
                                     'time':0})
+        
 
 
         for vehicle in self.vehicles:
@@ -92,9 +102,14 @@ class Ant:
                             tpos1=vehicle['tour'][tpos]
                             tpos2=vehicle['tour'][tpos+1]
                             
-                            nLoc_st=max(self.locLog[tpos1]['end_time']+distM[tpos1][loc],dataM[loc]['ready_time'])
-                            nLoc_et=nLoc_st+dataM[loc]['service_time']
-
+                            try:
+                                nLoc_st=max(self.locLog[tpos1]['end_time']+distM[tpos1][loc],dataM[loc]['ready_time'])
+                                nLoc_et=nLoc_st+dataM[loc]['service_time']
+                            except:
+                                print('exception')
+                                print(tpos1)
+                                print(loc)
+                                time.sleep(10)
                             if (self.locLog[tpos1]['end_time']+distM[tpos1][loc]+dataM[loc]['service_time']<=dataM[loc]['due_time'] and
                                     nLoc_et+distM[loc][tpos2]<=self.locLog[tpos2]['start_time']):
                                 vehicle['tour'].insert(tpos+1,loc)
