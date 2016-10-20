@@ -18,7 +18,7 @@ distM=createDistanceMatrix(dataM)
 phiM1=createPheromoneMatix(size=len(distM),distance=1888)
 feasLocIN1= [[0 for i in range(locCount)] for j in range(locCount)]
 
-
+print(phiM1[0][1])
 vehicleNumber=35
 
 ant0=Ant(vehicleCount=vehicleNumber,dataM=dataM)
@@ -84,7 +84,8 @@ for vehicle in bestSolution['vehicles']:
 
 txtFile.close()
            
-
+for vehicle in bestSolution['vehicles']:
+    print(vehicle['tour'])
 
 
 

@@ -35,18 +35,10 @@ class Ant:
                 #feasable locs
                 feasLocs=[]
                 for loc in range(len(dataM)):
-                    if loc not in self.visited and vehicle['time']+distM[vehicle['currPos']][loc]<=dataM[loc]['ready_time']:
+                    if loc not in self.visited and vehicle['time']+distM[vehicle['currPos']][loc]+dataM[loc]['service_time']<=dataM[loc]['due_time']:
                         feasLocs.append(loc)
                 
                 if feasLocs:
-                    #decision how to calculate attractivness
-                    m8b=10*[1]
-                    m8b2=3*[2]
-                    m8b3=1*[3]
-                    m8b.extend(m8b2)
-                    m8b.extend(m8b3)
-                    m8b_dec=choice(m8b)
-
                     #attractivness of feasable locs
                     attractL={}
                     attractL0={}
@@ -56,21 +48,16 @@ class Ant:
                         feasLocDueTime=dataM[feasLoc]['due_time']
                         delivery_time=max(vehicle['time']+distanceToFeasLoc,feasLocReadyTime)
                         delta_time=delivery_time-vehicle['time']
-                        attr0=delta_time*(feasLocDueTime-vehicle['time'])
                         
+                        attr0=1/(delta_time*(feasLocDueTime-vehicle['time']))
 
-                        if m8b_dec==1:
-                            attr1=phiM[vehicle['currPos']][loc]*attr0
-                        if m8b_dec==2:
-                            attr1=attr0
-                        if m8b_dec==3:
-                            attr1=1
+                        attr1=phiM[vehicle['currPos']][loc]*attr0
                         
                         attractL0[feasLoc]=attr1
                     
                     minAttr=min(attractL0.values())
                     for loc in attractL0:
-                        attractL[loc]=int(attractL0[loc]/minAttr)
+                        attractL[loc]=int(attractL0[loc]/minAttr)**2
                     
                     choiceList=[]
                     for loc in attractL:
