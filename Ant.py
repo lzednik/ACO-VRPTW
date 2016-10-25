@@ -31,12 +31,15 @@ class Ant:
 
         
         for veh in range(self.vehicleCount):
+            start_pos=ilSL[veh][0]
             self.vehicles.append({  'vehNum':veh+1,
-                                    'tour':[ilSL[veh][0]],
-                                    'currPos':ilSL[veh][0],
-                                    'time':0})
-        
-
+                                    'tour':[start_pos],
+                                    'currPos':start_pos,
+                                    'time':dataM[start_pos]['service_time']})
+            self.visited.append(start_pos)
+            self.locLog[start_pos]={'start_time':0,
+                              'end_time':dataM[start_pos]['service_time']}
+            
 
         for vehicle in self.vehicles:
 
@@ -108,7 +111,7 @@ class Ant:
                             except:
                                 print('exception')
                                 print(tpos1)
-                                print(loc)
+                                print(vehicle['tour'])
                                 time.sleep(10)
                             if (self.locLog[tpos1]['end_time']+distM[tpos1][loc]+dataM[loc]['service_time']<=dataM[loc]['due_time'] and
                                     nLoc_et+distM[loc][tpos2]<=self.locLog[tpos2]['start_time']):

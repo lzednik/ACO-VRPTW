@@ -4,8 +4,8 @@ dataM=readData('Input/solomon_r101.txt')
 distM=createDistanceMatrix(dataM)
 
 
-curr_time=30
-curr_pos=45
+curr_time=10
+curr_pos=59
 phi=0.00053
 
 
