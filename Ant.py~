@@ -9,7 +9,7 @@ class Ant:
     def __init__(self,vehicleCount,dataM):
         self.vehicleCount=vehicleCount
         self.vehicles=[]
-        self.visited=[]
+        self.visited=[0]
         self.distance=0
         self.time=0
         self.solution={'vehicles':[],'visited':[],'vehicleCount':vehicleCount,'visitedCount':0,'distance':0}
@@ -24,21 +24,26 @@ class Ant:
         self.vehicles=[]
         
         #initial location
-        ilD={}
+        il1={}
         for loc in range(len(dataM)):
-            ilD[loc]=dataM[loc]['due_time']
-        ilSL=sorted(ilD.items(), key=lambda x: x[1])
-
+            if loc != 0:
+                il1[loc]=dataM[loc]['ready_time']+dataM[loc]['service_time']
+        il2=sorted(il1.items(), key=lambda x: x[1])[0:self.vehicleCount]
+        
         
         for veh in range(self.vehicleCount):
-            start_pos=ilSL[veh][0]
+            il3=choice(il2)  
+            il2.remove(il3)
+
+            init_pos=il3[0]
+            
             self.vehicles.append({  'vehNum':veh+1,
-                                    'tour':[start_pos],
-                                    'currPos':start_pos,
-                                    'time':dataM[start_pos]['service_time']})
-            self.visited.append(start_pos)
-            self.locLog[start_pos]={'start_time':0,
-                              'end_time':dataM[start_pos]['service_time']}
+                                    'tour':[init_pos],
+                                    'currPos':init_pos,
+                                    'time':dataM[init_pos]['ready_time']+dataM[init_pos]['service_time']})
+            self.visited.append(init_pos)
+            self.locLog[init_pos]={'start_time':dataM[init_pos]['ready_time'],
+                              'end_time':dataM[init_pos]['ready_time']+dataM[init_pos]['service_time']}
             
 
         for vehicle in self.vehicles:
