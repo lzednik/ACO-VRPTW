@@ -1,4 +1,5 @@
 from funs import *
+from random import choice
 
 dataM=readData('Input/solomon_r101.txt')
 distM=createDistanceMatrix(dataM)
@@ -9,30 +10,27 @@ curr_pos=59
 phi=0.00053
 
 
-feasable=[]
-for loc in range(len(dataM)):
-    if curr_time+distM[curr_pos][loc]+dataM[loc]['service_time']<=dataM[loc]['due_time'] and loc != curr_pos:
-        feasable.append(loc)
+il1={}
+
+for loc in range(1,len(dataM)):
+    il1[loc]=dataM[loc]['ready_time']+dataM[loc]['service_time']
+
+il2=sorted(il1.items(), key=lambda x: x[1])[0:10]
 
 
+multiplier=len(il2)
+iltc=[]
+for item in il2:
+    iltc+=multiplier*[item[0]]
+    multiplier-=1
 
-aDict={}
-for feasLoc in feasable:
-    distanceToFeasLoc=distM[curr_pos][feasLoc]
-    feasLocReadyTime=dataM[feasLoc]['ready_time']
-    feasLocDueTime=dataM[feasLoc]['due_time']
-    delivery_time=max(curr_time+distanceToFeasLoc,feasLocReadyTime)
-    delta_time=delivery_time-curr_time
-    attr0=1./(delta_time*(feasLocDueTime-curr_time))
-    aDict[feasLoc]=attr0*phi
+print('len il2',len(il2))
 
+for item in il2:
+    print(item)
 
-amin=min(aDict.values())
+print('*************')
+print(iltc)
 
-aDict2={}
-for item in aDict:
-    aDict2[item]=int(aDict[item]/amin)**2
-
-
-for item in aDict2:
-    print(item,'\tattr:\t',aDict2[item],'\tready t\t',dataM[item]['ready_time'],'\tdist\t',distM[curr_pos][item])
+nl=choice(iltc)
+print(nl)

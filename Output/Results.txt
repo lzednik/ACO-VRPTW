@@ -1,206 +1,204 @@
-[5, 85, 37, 91, 100, 0]
+[82, 53, 37, 89, 58, 0]
 
-loc:	5	ready_time:	34.0	service_time"	10.0	due_time"	44.0	dist to next"	8
-loc:	85	ready_time:	91.0	service_time"	10.0	due_time"	101.0	dist to next"	4
-loc:	37	ready_time:	134.0	service_time"	10.0	due_time"	144.0	dist to next"	5
-loc:	91	ready_time:	160.0	service_time"	10.0	due_time"	170.0	dist to next"	3
-loc:	100	ready_time:	185.0	service_time"	10.0	due_time"	195.0	dist to next"	24
+loc:	82	ready_time:	55.0	service_time"	10.0	due_time"	65.0	dist to next"	27
+loc:	53	ready_time:	95.0	service_time"	10.0	due_time"	105.0	dist to next"	20
+loc:	37	ready_time:	134.0	service_time"	10.0	due_time"	144.0	dist to next"	16
+loc:	89	ready_time:	176.0	service_time"	10.0	due_time"	186.0	dist to next"	13
+loc:	58	ready_time:	200.0	service_time"	10.0	due_time"	210.0	dist to next"	9
 loc:	0	ready_time:	0.0	service_time"	0.0	due_time"	230.0
 *******************************************
 
-[69, 57, 1, 70]
-
-loc:	69	ready_time:	50.0	service_time"	10.0	due_time"	60.0	dist to next"	35
-loc:	57	ready_time:	101.0	service_time"	10.0	due_time"	111.0	dist to next"	38
-loc:	1	ready_time:	161.0	service_time"	10.0	due_time"	171.0	dist to next"	8
-loc:	70	ready_time:	182.0	service_time"	10.0	due_time"	192.0
-*******************************************
-
-[2, 73, 22, 55, 25]
-
-loc:	2	ready_time:	50.0	service_time"	10.0	due_time"	60.0	dist to next"	9
-loc:	73	ready_time:	78.0	service_time"	10.0	due_time"	88.0	dist to next"	7
-loc:	22	ready_time:	97.0	service_time"	10.0	due_time"	107.0	dist to next"	22
-loc:	55	ready_time:	136.0	service_time"	10.0	due_time"	146.0	dist to next"	3
-loc:	25	ready_time:	172.0	service_time"	10.0	due_time"	182.0
-*******************************************
-
-[27, 76, 56, 74, 58]
-
-loc:	27	ready_time:	37.0	service_time"	10.0	due_time"	47.0	dist to next"	14
-loc:	76	ready_time:	73.0	service_time"	10.0	due_time"	83.0	dist to next"	30
-loc:	56	ready_time:	130.0	service_time"	10.0	due_time"	140.0	dist to next"	7
-loc:	74	ready_time:	149.0	service_time"	10.0	due_time"	159.0	dist to next"	16
-loc:	58	ready_time:	200.0	service_time"	10.0	due_time"	210.0
-*******************************************
-
-[14, 38, 43, 89]
-
-loc:	14	ready_time:	32.0	service_time"	10.0	due_time"	43.0	dist to next"	11
-loc:	38	ready_time:	83.0	service_time"	10.0	due_time"	93.0	dist to next"	18
-loc:	43	ready_time:	132.0	service_time"	10.0	due_time"	142.0	dist to next"	32
-loc:	89	ready_time:	176.0	service_time"	10.0	due_time"	186.0
-*******************************************
-
-[21, 40, 50, 77]
-
-loc:	21	ready_time:	62.0	service_time"	10.0	due_time"	72.0	dist to next"	7
-loc:	40	ready_time:	85.0	service_time"	10.0	due_time"	95.0	dist to next"	23
-loc:	50	ready_time:	124.0	service_time"	10.0	due_time"	134.0	dist to next"	7
-loc:	77	ready_time:	179.0	service_time"	10.0	due_time"	189.0
-*******************************************
-
-[98, 61, 94, 26, 13, 93]
+[98, 61, 85, 96, 91, 93]
 
 loc:	98	ready_time:	58.0	service_time"	10.0	due_time"	68.0	dist to next"	7
-loc:	61	ready_time:	76.0	service_time"	10.0	due_time"	86.0	dist to next"	14
-loc:	94	ready_time:	100.0	service_time"	10.0	due_time"	110.0	dist to next"	19
-loc:	26	ready_time:	132.0	service_time"	10.0	due_time"	142.0	dist to next"	15
-loc:	13	ready_time:	159.0	service_time"	10.0	due_time"	169.0	dist to next"	12
+loc:	61	ready_time:	76.0	service_time"	10.0	due_time"	86.0	dist to next"	4
+loc:	85	ready_time:	91.0	service_time"	10.0	due_time"	101.0	dist to next"	7
+loc:	96	ready_time:	135.0	service_time"	10.0	due_time"	145.0	dist to next"	10
+loc:	91	ready_time:	160.0	service_time"	10.0	due_time"	170.0	dist to next"	5
 loc:	93	ready_time:	188.0	service_time"	10.0	due_time"	198.0
 *******************************************
 
-[39, 23, 41, 97, 60]
+[47, 19, 49, 17, 100]
 
-loc:	39	ready_time:	44.0	service_time"	10.0	due_time"	54.0	dist to next"	8
-loc:	23	ready_time:	68.0	service_time"	10.0	due_time"	78.0	dist to next"	13
-loc:	41	ready_time:	97.0	service_time"	10.0	due_time"	107.0	dist to next"	22
+loc:	47	ready_time:	51.0	service_time"	10.0	due_time"	61.0	dist to next"	8
+loc:	19	ready_time:	76.0	service_time"	10.0	due_time"	86.0	dist to next"	12
+loc:	49	ready_time:	108.0	service_time"	10.0	due_time"	118.0	dist to next"	38
+loc:	17	ready_time:	157.0	service_time"	10.0	due_time"	167.0	dist to next"	17
+loc:	100	ready_time:	185.0	service_time"	10.0	due_time"	195.0
+*******************************************
+
+[36, 84, 97, 60]
+
+loc:	36	ready_time:	41.0	service_time"	10.0	due_time"	52.0	dist to next"	30
+loc:	84	ready_time:	101.0	service_time"	10.0	due_time"	111.0	dist to next"	17
 loc:	97	ready_time:	133.0	service_time"	10.0	due_time"	143.0	dist to next"	15
 loc:	60	ready_time:	162.0	service_time"	10.0	due_time"	172.0
 *******************************************
 
-[65, 71, 9, 20, 80]
+[59, 16, 86, 43]
 
-loc:	65	ready_time:	51.0	service_time"	10.0	due_time"	61.0	dist to next"	10
-loc:	71	ready_time:	77.0	service_time"	10.0	due_time"	87.0	dist to next"	8
-loc:	9	ready_time:	97.0	service_time"	10.0	due_time"	107.0	dist to next"	11
-loc:	20	ready_time:	126.0	service_time"	10.0	due_time"	136.0	dist to next"	30
+loc:	59	ready_time:	18.0	service_time"	10.0	due_time"	28.0	dist to next"	11
+loc:	16	ready_time:	75.0	service_time"	10.0	due_time"	85.0	dist to next"	6
+loc:	86	ready_time:	94.0	service_time"	10.0	due_time"	104.0	dist to next"	24
+loc:	43	ready_time:	132.0	service_time"	10.0	due_time"	142.0
+*******************************************
+
+[21, 73, 22, 54, 80]
+
+loc:	21	ready_time:	62.0	service_time"	10.0	due_time"	72.0	dist to next"	3
+loc:	73	ready_time:	78.0	service_time"	10.0	due_time"	88.0	dist to next"	7
+loc:	22	ready_time:	97.0	service_time"	10.0	due_time"	107.0	dist to next"	22
+loc:	54	ready_time:	140.0	service_time"	10.0	due_time"	150.0	dist to next"	8
 loc:	80	ready_time:	182.0	service_time"	10.0	due_time"	192.0
 *******************************************
 
-[52, 88, 48]
+[83, 88, 74]
 
-loc:	52	ready_time:	52.0	service_time"	10.0	due_time"	62.0	dist to next"	9
-loc:	88	ready_time:	74.0	service_time"	10.0	due_time"	84.0	dist to next"	13
-loc:	48	ready_time:	165.0	service_time"	10.0	due_time"	175.0
+loc:	83	ready_time:	44.0	service_time"	10.0	due_time"	54.0	dist to next"	19
+loc:	88	ready_time:	74.0	service_time"	10.0	due_time"	84.0	dist to next"	43
+loc:	74	ready_time:	149.0	service_time"	10.0	due_time"	159.0
 *******************************************
 
-[47, 19, 66]
+[39, 75, 57, 24, 77]
 
-loc:	47	ready_time:	51.0	service_time"	10.0	due_time"	61.0	dist to next"	8
-loc:	19	ready_time:	76.0	service_time"	10.0	due_time"	86.0	dist to next"	36
-loc:	66	ready_time:	127.0	service_time"	10.0	due_time"	137.0
+loc:	39	ready_time:	44.0	service_time"	10.0	due_time"	54.0	dist to next"	11
+loc:	75	ready_time:	69.0	service_time"	10.0	due_time"	79.0	dist to next"	17
+loc:	57	ready_time:	101.0	service_time"	10.0	due_time"	111.0	dist to next"	40
+loc:	24	ready_time:	153.0	service_time"	10.0	due_time"	163.0	dist to next"	14
+loc:	77	ready_time:	179.0	service_time"	10.0	due_time"	189.0
 *******************************************
 
-[31, 7, 54]
+[5, 9, 50, 1, 70]
 
-loc:	31	ready_time:	50.0	service_time"	10.0	due_time"	60.0	dist to next"	11
-loc:	7	ready_time:	81.0	service_time"	10.0	due_time"	91.0	dist to next"	42
-loc:	54	ready_time:	140.0	service_time"	10.0	due_time"	150.0
+loc:	5	ready_time:	34.0	service_time"	10.0	due_time"	44.0	dist to next"	50
+loc:	9	ready_time:	97.0	service_time"	10.0	due_time"	107.0	dist to next"	15
+loc:	50	ready_time:	124.0	service_time"	10.0	due_time"	134.0	dist to next"	6
+loc:	1	ready_time:	161.0	service_time"	10.0	due_time"	171.0	dist to next"	8
+loc:	70	ready_time:	182.0	service_time"	10.0	due_time"	192.0
 *******************************************
 
-[36, 64, 46, 17]
+[42, 44, 94, 68]
 
-loc:	36	ready_time:	41.0	service_time"	10.0	due_time"	52.0	dist to next"	21
-loc:	64	ready_time:	73.0	service_time"	10.0	due_time"	83.0	dist to next"	31
-loc:	46	ready_time:	117.0	service_time"	10.0	due_time"	127.0	dist to next"	18
-loc:	17	ready_time:	157.0	service_time"	10.0	due_time"	167.0
+loc:	42	ready_time:	31.0	service_time"	10.0	due_time"	41.0	dist to next"	13
+loc:	44	ready_time:	69.0	service_time"	10.0	due_time"	79.0	dist to next"	19
+loc:	94	ready_time:	100.0	service_time"	10.0	due_time"	110.0	dist to next"	32
+loc:	68	ready_time:	142.0	service_time"	10.0	due_time"	152.0
 *******************************************
 
-[62, 18, 10]
+[65, 81, 3, 25]
 
-loc:	62	ready_time:	58.0	service_time"	10.0	due_time"	68.0	dist to next"	18
-loc:	18	ready_time:	87.0	service_time"	10.0	due_time"	97.0	dist to next"	22
-loc:	10	ready_time:	124.0	service_time"	10.0	due_time"	134.0
+loc:	65	ready_time:	51.0	service_time"	10.0	due_time"	61.0	dist to next"	24
+loc:	81	ready_time:	94.0	service_time"	10.0	due_time"	104.0	dist to next"	9
+loc:	3	ready_time:	116.0	service_time"	10.0	due_time"	126.0	dist to next"	26
+loc:	25	ready_time:	172.0	service_time"	10.0	due_time"	182.0
 *******************************************
 
-[15, 6, 4]
+[12, 6, 4]
 
-loc:	15	ready_time:	61.0	service_time"	10.0	due_time"	71.0	dist to next"	25
+loc:	12	ready_time:	63.0	service_time"	10.0	due_time"	73.0	dist to next"	25
 loc:	6	ready_time:	99.0	service_time"	10.0	due_time"	109.0	dist to next"	31
 loc:	4	ready_time:	149.0	service_time"	10.0	due_time"	159.0
 *******************************************
 
-[72, 75, 24]
+[27, 76, 10, 48]
 
-loc:	72	ready_time:	35.0	service_time"	10.0	due_time"	45.0	dist to next"	5
-loc:	75	ready_time:	69.0	service_time"	10.0	due_time"	79.0	dist to next"	28
-loc:	24	ready_time:	153.0	service_time"	10.0	due_time"	163.0
+loc:	27	ready_time:	37.0	service_time"	10.0	due_time"	47.0	dist to next"	14
+loc:	76	ready_time:	73.0	service_time"	10.0	due_time"	83.0	dist to next"	26
+loc:	10	ready_time:	124.0	service_time"	10.0	due_time"	134.0	dist to next"	18
+loc:	48	ready_time:	165.0	service_time"	10.0	due_time"	175.0
 *******************************************
 
-[28, 81, 34, 35]
+[31, 7, 46]
 
-loc:	28	ready_time:	39.0	service_time"	10.0	due_time"	49.0	dist to next"	22
-loc:	81	ready_time:	94.0	service_time"	10.0	due_time"	104.0	dist to next"	10
+loc:	31	ready_time:	50.0	service_time"	10.0	due_time"	60.0	dist to next"	11
+loc:	7	ready_time:	81.0	service_time"	10.0	due_time"	91.0	dist to next"	18
+loc:	46	ready_time:	117.0	service_time"	10.0	due_time"	127.0
+*******************************************
+
+[2, 40, 56]
+
+loc:	2	ready_time:	50.0	service_time"	10.0	due_time"	60.0	dist to next"	9
+loc:	40	ready_time:	85.0	service_time"	10.0	due_time"	95.0	dist to next"	18
+loc:	56	ready_time:	130.0	service_time"	10.0	due_time"	140.0
+*******************************************
+
+[92, 8, 13]
+
+loc:	92	ready_time:	18.0	service_time"	10.0	due_time"	29.0	dist to next"	24
+loc:	8	ready_time:	95.0	service_time"	10.0	due_time"	105.0	dist to next"	26
+loc:	13	ready_time:	159.0	service_time"	10.0	due_time"	169.0
+*******************************************
+
+[63, 30, 90, 20]
+
+loc:	63	ready_time:	34.0	service_time"	10.0	due_time"	45.0	dist to next"	15
+loc:	30	ready_time:	71.0	service_time"	10.0	due_time"	81.0	dist to next"	11
+loc:	90	ready_time:	95.0	service_time"	10.0	due_time"	105.0	dist to next"	14
+loc:	20	ready_time:	126.0	service_time"	10.0	due_time"	136.0
+*******************************************
+
+[14, 99, 26]
+
+loc:	14	ready_time:	32.0	service_time"	10.0	due_time"	43.0	dist to next"	16
+loc:	99	ready_time:	83.0	service_time"	10.0	due_time"	93.0	dist to next"	25
+loc:	26	ready_time:	132.0	service_time"	10.0	due_time"	142.0
+*******************************************
+
+[33, 29, 78, 34, 35]
+
+loc:	33	ready_time:	37.0	service_time"	10.0	due_time"	47.0	dist to next"	14
+loc:	29	ready_time:	63.0	service_time"	10.0	due_time"	73.0	dist to next"	10
+loc:	78	ready_time:	96.0	service_time"	10.0	due_time"	106.0	dist to next"	5
 loc:	34	ready_time:	117.0	service_time"	10.0	due_time"	127.0	dist to next"	10
 loc:	35	ready_time:	143.0	service_time"	10.0	due_time"	153.0
 *******************************************
 
-[63, 11, 90, 68]
+[95, 79, 32]
 
-loc:	63	ready_time:	34.0	service_time"	10.0	due_time"	45.0	dist to next"	8
-loc:	11	ready_time:	67.0	service_time"	10.0	due_time"	77.0	dist to next"	11
-loc:	90	ready_time:	95.0	service_time"	10.0	due_time"	105.0	dist to next"	37
-loc:	68	ready_time:	142.0	service_time"	10.0	due_time"	152.0
-*******************************************
-
-[45, 99, 96]
-
-loc:	45	ready_time:	32.0	service_time"	10.0	due_time"	42.0	dist to next"	18
-loc:	99	ready_time:	83.0	service_time"	10.0	due_time"	93.0	dist to next"	2
-loc:	96	ready_time:	135.0	service_time"	10.0	due_time"	145.0
-*******************************************
-
-[82, 8, 32]
-
-loc:	82	ready_time:	55.0	service_time"	10.0	due_time"	65.0	dist to next"	6
-loc:	8	ready_time:	95.0	service_time"	10.0	due_time"	105.0	dist to next"	36
+loc:	95	ready_time:	39.0	service_time"	10.0	due_time"	49.0	dist to next"	40
+loc:	79	ready_time:	92.0	service_time"	10.0	due_time"	102.0	dist to next"	30
 loc:	32	ready_time:	141.0	service_time"	10.0	due_time"	151.0
 *******************************************
 
-[42, 44, 86]
+[45, 18]
 
-loc:	42	ready_time:	31.0	service_time"	10.0	due_time"	41.0	dist to next"	13
-loc:	44	ready_time:	69.0	service_time"	10.0	due_time"	79.0	dist to next"	8
-loc:	86	ready_time:	94.0	service_time"	10.0	due_time"	104.0
+loc:	45	ready_time:	32.0	service_time"	10.0	due_time"	42.0	dist to next"	14
+loc:	18	ready_time:	87.0	service_time"	10.0	due_time"	97.0
 *******************************************
 
-[83, 16, 84]
+[62, 55]
 
-loc:	83	ready_time:	44.0	service_time"	10.0	due_time"	54.0	dist to next"	17
-loc:	16	ready_time:	75.0	service_time"	10.0	due_time"	85.0	dist to next"	11
-loc:	84	ready_time:	101.0	service_time"	10.0	due_time"	111.0
+loc:	62	ready_time:	58.0	service_time"	10.0	due_time"	68.0	dist to next"	52
+loc:	55	ready_time:	136.0	service_time"	10.0	due_time"	146.0
 *******************************************
 
-[59, 51, 3]
+[52, 87]
 
-loc:	59	ready_time:	18.0	service_time"	10.0	due_time"	28.0	dist to next"	44
-loc:	51	ready_time:	88.0	service_time"	10.0	due_time"	98.0	dist to next"	14
-loc:	3	ready_time:	116.0	service_time"	10.0	due_time"	126.0
+loc:	52	ready_time:	52.0	service_time"	10.0	due_time"	62.0	dist to next"	25
+loc:	87	ready_time:	93.0	service_time"	10.0	due_time"	103.0
 *******************************************
 
-[95, 53]
+[72, 23, 41]
 
-loc:	95	ready_time:	39.0	service_time"	10.0	due_time"	49.0	dist to next"	13
-loc:	53	ready_time:	95.0	service_time"	10.0	due_time"	105.0
+loc:	72	ready_time:	35.0	service_time"	10.0	due_time"	45.0	dist to next"	13
+loc:	23	ready_time:	68.0	service_time"	10.0	due_time"	78.0	dist to next"	13
+loc:	41	ready_time:	97.0	service_time"	10.0	due_time"	107.0
 *******************************************
 
-[92, 67]
+[15]
 
-loc:	92	ready_time:	18.0	service_time"	10.0	due_time"	29.0	dist to next"	48
-loc:	67	ready_time:	83.0	service_time"	10.0	due_time"	93.0
+loc:	15	ready_time:	61.0	service_time"	10.0	due_time"	71.0
 *******************************************
 
-[33, 29, 78]
+[69, 51, 66]
 
-loc:	33	ready_time:	37.0	service_time"	10.0	due_time"	47.0	dist to next"	14
-loc:	29	ready_time:	63.0	service_time"	10.0	due_time"	73.0	dist to next"	10
-loc:	78	ready_time:	96.0	service_time"	10.0	due_time"	106.0
+loc:	69	ready_time:	50.0	service_time"	10.0	due_time"	60.0	dist to next"	16
+loc:	51	ready_time:	88.0	service_time"	10.0	due_time"	98.0	dist to next"	15
+loc:	66	ready_time:	127.0	service_time"	10.0	due_time"	137.0
 *******************************************
 
-[12, 79]
+[28]
 
-loc:	12	ready_time:	63.0	service_time"	10.0	due_time"	73.0	dist to next"	14
-loc:	79	ready_time:	92.0	service_time"	10.0	due_time"	102.0
+loc:	28	ready_time:	39.0	service_time"	10.0	due_time"	49.0
 *******************************************
 

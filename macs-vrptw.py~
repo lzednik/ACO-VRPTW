@@ -25,26 +25,27 @@ ant0=Ant(vehicleCount=vehicleNumber,dataM=dataM)
 
 
 for i in range(300):
-#    if i%10 == 0:
-#        print('Iteration:',i)
+    if i%100 == 0:
+        print('Iteration:',i)
 
     bestSolution=ant0.calculate(dataM,distM,phiM1,feasLocIN1,1)
         
     #evaporate all phis
+    #uncomment to use pheromones
     for px in range(len(phiM1)):
         for py in range(len(phiM1)):
             phiM1[px][py]=0.98*phiM1[px][py]
 
         
-
     #full solution:
     if locCount==bestSolution['visitedCount']:
-        #update phi for all tours in full solution
+        #update phi
         for vehicle in bestSolution['vehicles']:
             for loc in range(len(vehicle['tour'])-1):
                 locFrom=vehicle['tour'][loc]
                 locTo=vehicle['tour'][loc+1]
-                phiM1[locFrom][locTo]=1.10*phiM1[locFrom][locTo]
+                #uncomment the phiM1 below to use pheromones
+                #phiM1[locFrom][locTo]=1.10*phiM1[locFrom][locTo]
 
         vehicleNumber-=1
         ant0=Ant(vehicleCount=vehicleNumber,dataM=dataM)   
