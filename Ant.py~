@@ -28,14 +28,20 @@ class Ant:
         for loc in range(len(dataM)):
             if loc != 0:
                 il1[loc]=dataM[loc]['ready_time']+dataM[loc]['service_time']
-        il2=sorted(il1.items(), key=lambda x: x[1])[0:self.vehicleCount]
         
         
-        for veh in range(self.vehicleCount):
-            il3=choice(il2)  
-            il2.remove(il3)
+        il2=sorted(il1.items(), key=lambda x: x[1])
+        ilPrime=il2[0:self.vehicleCount]
+        ilBackup=il2[self.vehicleCount:len(dataM)]
 
-            init_pos=il3[0]
+        for veh in range(self.vehicleCount):
+            if ilPrime:
+                ilChoice=choice(ilPrime)  
+                ilPrime.remove(ilChoice)
+            else:
+                ilChoice=choice(ilBackup)  
+                ilBackup.remove(ilChoice)
+            init_pos=ilChoice[0]
             
             self.vehicles.append({  'vehNum':veh+1,
                                     'tour':[init_pos],
@@ -47,13 +53,15 @@ class Ant:
             
 
         for vehicle in self.vehicles:
+            #init pos
 
             flocs=True
             while flocs==True:
                 #feasable locs
                 feasLocs=[]
                 for loc in range(len(dataM)):
-                    if loc not in self.visited and vehicle['time']+distM[vehicle['currPos']][loc]+dataM[loc]['service_time']<=dataM[loc]['due_time']:
+                    #if loc not in self.visited and vehicle['time']+distM[vehicle['currPos']][loc]+dataM[loc]['service_time']<=dataM[loc]['due_time']:
+                    if loc not in self.visited and vehicle['time']+distM[vehicle['currPos']][loc]<=dataM[loc]['due_time']:
                         feasLocs.append(loc)
                 
                 if feasLocs:
