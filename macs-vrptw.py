@@ -45,7 +45,7 @@ for i in range(300):
                 locFrom=vehicle['tour'][loc]
                 locTo=vehicle['tour'][loc+1]
                 #uncomment the phiM1 below to use pheromones
-                #phiM1[locFrom][locTo]=1.10*phiM1[locFrom][locTo]
+                phiM1[locFrom][locTo]=1.10*phiM1[locFrom][locTo]
 
         vehicleNumber-=1
         ant0=Ant(vehicleCount=vehicleNumber,dataM=dataM)   

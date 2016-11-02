@@ -81,10 +81,15 @@ class Ant:
                         
                         attractL0[feasLoc]=attr1
                     
-                    minAttr=min(attractL0.values())
-                    for loc in attractL0:
-                        attractL[loc]=int(attractL0[loc]/minAttr)**2
-                    
+                    try:
+                        minAttr=min(attractL0.values())
+                        for loc in attractL0:
+                            attractL[loc]=int(attractL0[loc]/minAttr)**2
+                    except:
+                        for item in attraclL0:
+                            print('loc:\t',item,'\tattr\t',atractL0[item])
+                        time.sleep(30)
+
                     choiceList=[]
                     for loc in attractL:
                         choiceList+=int(attractL[loc])*[loc]
