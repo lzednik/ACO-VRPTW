@@ -24,7 +24,7 @@ vehicleNumber=35
 ant0=Ant(vehicleCount=vehicleNumber,dataM=dataM)
 
 
-for i in range(300):
+for i in range(5000):
     if i%100 == 0:
         print('Iteration:',i)
 
@@ -39,6 +39,11 @@ for i in range(300):
         
     #full solution:
     if locCount==bestSolution['visitedCount']:
+        #evaporate all phis
+        for px in range(len(phiM1)):
+            for py in range(len(phiM1)):
+                phiM1[px][py]=0.9*phiM1[px][py]
+
         #update phi
         for vehicle in bestSolution['vehicles']:
             for loc in range(len(vehicle['tour'])-1):

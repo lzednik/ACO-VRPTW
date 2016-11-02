@@ -66,8 +66,8 @@ class Ant:
                 
                 if feasLocs:
                     #attractivness of feasable locs
-                    attractL={}
                     attractL0={}
+                    attractL1={}
                     for feasLoc in feasLocs:
                         distanceToFeasLoc=distM[vehicle['currPos']][feasLoc]
                         feasLocReadyTime=dataM[feasLoc]['ready_time']
@@ -75,24 +75,16 @@ class Ant:
                         delivery_time=max(vehicle['time']+distanceToFeasLoc,feasLocReadyTime)
                         delta_time=delivery_time-vehicle['time']
                         
-                        attr0=1/(delta_time*(feasLocDueTime-vehicle['time']))
+                        attr0=delta_time*(feasLocDueTime-vehicle['time'])
+                        attractL0[feasLoc]=attr0
 
-                        attr1=phiM[vehicle['currPos']][loc]*attr0
-                        
-                        attractL0[feasLoc]=attr1
-                    
-                    try:
-                        minAttr=min(attractL0.values())
-                        for loc in attractL0:
-                            attractL[loc]=int(attractL0[loc]/minAttr)**2
-                    except:
-                        for item in attraclL0:
-                            print('loc:\t',item,'\tattr\t',atractL0[item])
-                        time.sleep(30)
+                    maxAttr0=max(attractL0.values())
+                    for loc in attractL0:
+                        attractL1[loc]=(1+phiM[vehicle['currPos']][loc])*float(maxAttr0/attractL0[loc])**2
 
                     choiceList=[]
-                    for loc in attractL:
-                        choiceList+=int(attractL[loc])*[loc]
+                    for loc in attractL1:
+                        choiceList+=int(attractL1[loc])*[loc]
                     
                     nextLoc=choice(choiceList)
                        

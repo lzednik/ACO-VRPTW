@@ -17,6 +17,8 @@ for loc in range(len(dataM)):
 
 
 txtFile=open('Output/attr_test.txt','w')
+txtFile.write('attrFirst')
+txtFile.write('\t')
 txtFile.write('attr0')
 txtFile.write('\t')
 txtFile.write('phi')
@@ -32,6 +34,8 @@ for feasLoc in feasable:
     attr0=1./(delta_time*(feasLocDueTime-curr_time))
     aDict[feasLoc]=attr0*phi
     
+    txtFile.write(str((delta_time*(feasLocDueTime-curr_time))))
+    txtFile.write('\t')
     txtFile.write(str(attr0))
     txtFile.write('\t')
     txtFile.write(str(phi))
