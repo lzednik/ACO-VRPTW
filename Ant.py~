@@ -65,44 +65,35 @@ class Ant:
                         feasLocs.append(loc)
                 
                 if feasLocs:
-                    choice_type =choice([0,0,0,0,0,0,0,0,0,0,1])
                     
                     attractL0={}
                     attractL1={}
                     choiceList=[]
-                   
-                    if choice_type ==0:
-                        #attractivness of feasable locs
-                        
-                        for feasLoc in feasLocs:
-                            distanceToFeasLoc=distM[vehicle['currPos']][feasLoc]
-                            feasLocReadyTime=dataM[feasLoc]['ready_time']
-                            feasLocDueTime=dataM[feasLoc]['due_time']
-                            delivery_time=max(vehicle['time']+distanceToFeasLoc,feasLocReadyTime)
-                            delta_time=delivery_time-vehicle['time']
-                            
-                            attr0=delta_time*(feasLocDueTime-vehicle['time'])
-                            attractL0[feasLoc]=attr0
-
-                        maxAttr0=max(attractL0.values())
-                        for loc in attractL0:
-                            attractL1[loc]=(1+phiM[vehicle['currPos']][loc])*float(maxAttr0/attractL0[loc])**2
-
-                        
-                        for loc in attractL1:
-                            choiceList+=int(attractL1[loc])*[loc]
+                    attIN0 ={}
+                    #attractivness of feasable locs
                     
-                    else:
-                        for feasLoc in feasLocs:
-                            attractL0[feasLoc]=feasLocIN[vehicle['currPos']][loc]
+                    for feasLoc in feasLocs:
+                        distanceToFeasLoc=distM[vehicle['currPos']][feasLoc]
+                        feasLocReadyTime=dataM[feasLoc]['ready_time']
+                        feasLocDueTime=dataM[feasLoc]['due_time']
+                        delivery_time=max(vehicle['time']+distanceToFeasLoc,feasLocReadyTime)
+                        delta_time=delivery_time-vehicle['time']
+                        
+                        attr0=delta_time*(feasLocDueTime-vehicle['time'])
+                        attractL0[feasLoc]=attr0
+                        attIN0[feasLoc]=feasLocIN[vehicle['currPos']][feasLoc]
 
-                        maxAttr0=max(attractL0.values())
+                    maxAttr0=max(attractL0.values())
+                    maxIN0=max(attIN0.values())
 
-                        for loc in attractL0:
-                            attractL1[loc]=float(maxAttr0/attractL0[loc])**2
+                    
+                    for loc in attractL0:
+                        #attractL1[loc]=((1+phiM[vehicle['currPos']][loc])*float(maxAttr0/attractL0[loc])**2)*(maxIN0/attIN0[loc])
+                        attractL1[loc]=(1+phiM[vehicle['currPos']][loc])*float(maxAttr0/attractL0[loc])**2
 
-                        for loc in attractL1:
-                            choiceList+=int(attractL1[loc])*[loc]
+                    
+                    for loc in attractL1:
+                        choiceList+=int(attractL1[loc])*[loc]
                     
                     nextLoc=choice(choiceList)
                        

@@ -23,7 +23,7 @@ vehicleNumber=35
 ant0=Ant(vehicleCount=vehicleNumber,dataM=dataM)
 
 
-for i in range(700):
+for i in range(500):
     if i%100 == 0:
         print('Iteration:',i)
 
