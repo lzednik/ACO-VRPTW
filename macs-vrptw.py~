@@ -16,15 +16,14 @@ txtFile.close()
 distM=createDistanceMatrix(dataM)
 
 phiM1=createPheromoneMatix(size=len(distM),distance=1888)
-feasLocIN1= [[0 for i in range(locCount)] for j in range(locCount)]
+feasLocIN1= [[1 for i in range(locCount)] for j in range(locCount)]
 
-print(phiM1[0][1])
 vehicleNumber=35
 
 ant0=Ant(vehicleCount=vehicleNumber,dataM=dataM)
 
 
-for i in range(5000):
+for i in range(700):
     if i%100 == 0:
         print('Iteration:',i)
 
