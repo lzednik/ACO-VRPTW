@@ -3,9 +3,17 @@ from ant import Ant
 import time
 import pickle
 from os import path
+import sqlite3
 
 dataM=readData('Input/solomon_r101.txt')
 locCount=len(dataM)
+
+
+dtb='Output/Ants.sqlite'
+conn=sqlite3.connect(dtb)
+c=conn.cursor()
+c.execute('DELETE FROM Phi')
+c.execute('DELETE FROM Vehicles')
 
 txtFile=open('Output/DataM.txt','w')
 for rec in dataM:
@@ -23,18 +31,12 @@ vehicleNumber=35
 ant0=Ant(vehicleCount=vehicleNumber,dataM=dataM)
 
 
-for i in range(500):
+for i in range(100):
     if i%100 == 0:
         print('Iteration:',i)
 
     bestSolution=ant0.calculate(dataM,distM,phiM1,feasLocIN1,1)
         
-    #evaporate all phis
-    #uncomment to use pheromones
-    for px in range(len(phiM1)):
-        for py in range(len(phiM1)):
-            phiM1[px][py]=0.98*phiM1[px][py]
-
         
     #full solution:
     if locCount==bestSolution['visitedCount']:
@@ -48,9 +50,8 @@ for i in range(500):
             for loc in range(len(vehicle['tour'])-1):
                 locFrom=vehicle['tour'][loc]
                 locTo=vehicle['tour'][loc+1]
-                #uncomment the phiM1 below to use pheromones
                 phiM1[locFrom][locTo]=1.10*phiM1[locFrom][locTo]
-
+        
         vehicleNumber-=1
         ant0=Ant(vehicleCount=vehicleNumber,dataM=dataM)   
 
@@ -60,6 +61,32 @@ for i in range(500):
         print('full solution:\t',bestSolution['visitedCount'])
         print('****************************************')
         print('')
+
+    #log phi
+    for px in range(len(phiM1)):
+        for py in range(len(phiM1)):
+            c.execute('''INSERT INTO Phi(Iteration, locFrom, locTo, Phi)
+                         VALUES(?,?,?,?)''', (i,px, py,phiM1[px][py]))
+
+    #log vehicles
+    for vehicle in bestSolution['vehicles']:
+        vehNum=vehicle['vehNum']
+        for pos in range(len(vehicle['tour'])):
+            loc=vehicle['tour'][pos]           
+            if pos<len(vehicle['tour'])-1:
+                nloc=vehicle['tour'][pos+1]
+            else:
+                nloc=-999
+            rt=dataM[loc]['ready_time']
+            st=dataM[loc]['service_time']
+            dt=dataM[loc]['due_time']
+            if pos<len(vehicle['tour'])-1:
+                dtn=distM[loc][nloc]
+            else:
+                dtn=0
+            c.execute('''INSERT INTO Vehicles(Iteration, vehNum, Loc, readyTime,serviceTime,dueTime,nextLoc,distToNext)
+                         VALUES(?,?,?,?,?,?,?,?)''', (i,vehNum, loc,rt,st,dt,nloc,dtn))
+           
 
 #write results for checking
 txtFile=open('Output/Results.txt','w')
@@ -93,7 +120,8 @@ for vehicle in bestSolution['vehicles']:
     print(vehicle['tour'])
 
 
-
+conn.commit()
+conn.close()
 
 print('all done')
 #iteration=0
