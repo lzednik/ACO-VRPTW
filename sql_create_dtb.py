@@ -4,19 +4,27 @@ dtb='Output/Ants.sqlite'
 conn=sqlite3.connect(dtb)
 c=conn.cursor()
 
+c.execute('DROP TABLE Phi')
+c.execute('DROP TABLE Vehicles')
+c.execute('DROP TABLE Attr')
+c.execute('DROP TABLE Summary')
+
+
 #phi
-#c.execute('''
-#    CREATE TABLE Phi(Iteration INTEGER, locFrom INTEGER,
-#                       locTo INTEGER, Phi REAL)
-#''')
+c.execute('''
+    CREATE TABLE Phi(   iter INTEGER, 
+                        locFrom INTEGER,
+                        locTo INTEGER, 
+                        phi REAL)
+''')
 
 
-#c.execute('DROP TABLE Vehicles')
+
 #Vehicles
 c.execute('''
-    CREATE TABLE Vehicles(  Iteration INTEGER, 
+    CREATE TABLE Vehicles(  iter INTEGER, 
                             vehNum INTEGER,
-                            Loc INTEGER, 
+                            loc INTEGER, 
                             readyTime INTEGER,
                             serviceTime INTEGER,
                             dueTime INTEGER,
@@ -25,11 +33,28 @@ c.execute('''
 ''')
 
 
+#Attr
+c.execute('''
+    CREATE TABLE Attr(  iter INTEGER, 
+                        vehNum INTEGER,
+                        currLoc INTEGER, 
+                        nextLoc INTEGER,
+                        attr0 REAL,
+                        attr1 REAL)
+''')
 
-#c.execute('''
-#    CREATE TABLE Attraction(Iteration INTEGER PRIMARY KEY, locFrom INTEGER,
-#                       locTo INTEGER, Phi REAL, Attr REAL)
-#''')
+
+
+#Vehicles
+#sum
+c.execute('''
+    CREATE TABLE Summary(   iter INTEGER,
+                            fullSol TEXT,
+                            vehNum INTEGER,
+                            tour TEXT)
+''')
+
+
 
 conn.commit()
 conn.close
