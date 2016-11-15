@@ -28,19 +28,27 @@ class Ant:
         for loc in range(1,len(dataM)):
             il1[loc]=dataM[loc]['ready_time']+dataM[loc]['service_time']
         
+        mil=max(il1.values())
+        il1=sorted(il1.items(), key=lambda x: x[1])
+        ilPrime0=il1[0:self.vehicleCount]
+        ilBackup0=il1[self.vehicleCount:len(dataM)]
         
-        il2=sorted(il1.items(), key=lambda x: x[1])
-        ilPrime=il2[0:self.vehicleCount]
-        ilBackup=il2[self.vehicleCount:len(dataM)]
-
+        ilPrime=[]
+        for x in ilPrime0:
+            ilPrime+=(int(mil/x[1])**2)*[x[0]]
+        ilBackup=[]
+        for x in ilBackup0:
+            ilBackup+=(int(mil/x[1])**2)*[x[0]]
+        
+        
         for veh in range(self.vehicleCount):
             if ilPrime:
-                ilChoice=choice(ilPrime)  
-                ilPrime.remove(ilChoice)
+                ilChoice=choice(ilPrime)
+                ilPrime[:] = [x for x in ilPrime if x != ilChoice]
             else:
                 ilChoice=choice(ilBackup)  
-                ilBackup.remove(ilChoice)
-            init_pos=ilChoice[0]
+                ilBackup[:] = [x for x in ilBackup if x != ilChoice]
+            init_pos=ilChoice
             
             self.vehicles.append({  'vehNum':veh+1,
                                     'tour':[init_pos],

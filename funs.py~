@@ -50,8 +50,7 @@ def createDistanceMatrix(dataM):
 def createPheromoneMatix(size,distance):
     #phi=1/(size*distance) perhaps this should change back to size time distance which is in the paper
     phi=1/distance
-    phiLine=size*[phi]
-    phiMatrix=size*[phiLine]
+    phiMatrix=[[phi]*size for n in range(size)]
     return phiMatrix
 
 #nearest neighbor algorithm

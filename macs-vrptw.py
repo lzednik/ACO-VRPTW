@@ -18,6 +18,7 @@ c.execute('DELETE FROM Attr')
 c.execute('DELETE FROM Summary')
 
 txtFile=open('Output/DataM.txt','w')
+
 for rec in dataM:
     txtFile.write(str(rec))
     txtFile.write('\n')
@@ -27,7 +28,6 @@ distM=createDistanceMatrix(dataM)
 
 phiM1=createPheromoneMatix(size=len(distM),distance=1888)
 feasLocIN1= [[1 for i in range(locCount)] for j in range(locCount)]
-
 vehicleNumber=35
 
 ant0=Ant(vehicleCount=vehicleNumber,dataM=dataM)
@@ -43,18 +43,19 @@ for i in range(100):
     #full solution:
     if locCount==bestSolution['visitedCount']:
         fullSol='Y'
+
         #evaporate all phis
         for px in range(len(phiM1)):
             for py in range(len(phiM1)):
-                phiM1[px][py]=0.9*phiM1[px][py]
-
+                phiM1[px][py]=0.9*(phiM1[px][py])
+        
+        
         #update phi
         for vehicle in bestSolution['vehicles']:
-            for loc in range(len(vehicle['tour'])-1):
-                locFrom=vehicle['tour'][loc]
-                locTo=vehicle['tour'][loc+1]
+            for pos in range(len(vehicle['tour'])-1):
+                locFrom=vehicle['tour'][pos]
+                locTo=vehicle['tour'][pos+1]
                 phiM1[locFrom][locTo]=1.10*phiM1[locFrom][locTo]
-        
         vehicleNumber-=1
         ant0=Ant(vehicleCount=vehicleNumber,dataM=dataM)   
 
