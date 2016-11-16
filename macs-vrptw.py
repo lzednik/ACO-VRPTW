@@ -13,6 +13,7 @@ dtb='Output/Ants.sqlite'
 conn=sqlite3.connect(dtb)
 c=conn.cursor()
 c.execute('DELETE FROM Phi')
+c.execute('DELETE FROM FIN')
 c.execute('DELETE FROM Vehicles')
 c.execute('DELETE FROM Attr')
 c.execute('DELETE FROM Summary')
@@ -71,6 +72,13 @@ for i in range(100):
         for py in range(len(phiM1)):
             c.execute('''INSERT INTO Phi(iter, locFrom, locTo, phi)
                          VALUES(?,?,?,?)''', (i,px, py,phiM1[px][py]))
+
+    #log Fin
+    for px in range(len(feasLocIN1)):
+        for py in range(len(feasLocIN1)):
+            c.execute('''INSERT INTO FIN(iter, locFrom, locTo, finval)
+                         VALUES(?,?,?,?)''', (i,px, py,feasLocIN1[px][py]))
+
 
     #log vehicles
     for vehicle in bestSolution['vehicles']:
