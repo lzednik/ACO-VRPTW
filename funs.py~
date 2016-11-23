@@ -46,12 +46,45 @@ def createDistanceMatrix(dataM):
         distM.append(locFromDist)
     return(distM)
 
-#creates the pheromones matrix
-def createPheromoneMatix(size,distance):
-    #phi=1/(size*distance) perhaps this should change back to size time distance which is in the paper
-    phi=1/distance
-    phiMatrix=[[phi]*size for n in range(size)]
-    return phiMatrix
+
+#initial solution
+def initSolution(depo,dataM,distM):
+    visited=[]
+    vehicles=[]
+    totalDist=0
+    time=0
+    vehicle={  'vehNum':1,
+               'tour':[depo],
+               'currPos':depo,
+               'time':0}
+
+    while len(visited)<len(dataM)-1:
+        feasLocs=[]
+        for loc in range(1,len(dataM)):
+            if loc not in visited and vehicle['time']+distM[vehicle['currPos']][loc]<=dataM[loc]['due_time']:
+                feasLocs.append((loc,distM[vehicle['currPos']][loc]))
+        if feasLocs:
+            nextLoc= min(feasLocs, key = lambda t: t[1])[0]
+        
+            vehicle['tour'].append(nextLoc)
+            vehicle['time']=max(vehicle['time']+distM[vehicle['currPos']][nextLoc],dataM[nextLoc]['ready_time'])+dataM[nextLoc]['service_time']
+            totalDist+=distM[vehicle['currPos']][nextLoc]
+            vehicle['currPos']=nextLoc
+            visited.append(nextLoc)
+        else:
+            vehicles.append(vehicle)
+            vehicle={   'vehNum':1,
+                        'tour':[depo],
+                        'currPos':depo,
+                        'time':0}
+    
+    for vehicle in vehicles:
+        print(vehicle['tour'])
+
+    print('vehicle count',len(vehicles))
+    print('visited',visited)
+    print('totalDist',totalDist)
+
 
 #nearest neighbor algorithm
 def nnSearch(depo,distM,dataM):

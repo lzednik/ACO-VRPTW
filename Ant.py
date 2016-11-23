@@ -9,14 +9,14 @@ class Ant:
     def __init__(self,vehicleCount,dataM):
         self.vehicleCount=vehicleCount
         self.vehicles=[]
-        self.visited=[0]
+        self.visited=[]
         self.distance=0
         self.time=0
         self.solution={'vehicles':[],'visited':[],'vehicleCount':vehicleCount,'visitedCount':0,'distance':0}
         #self.locLog={0:{'start_time':0,'end_time':0}}        
         self.locLog={}
 
-    def calculate(self,dataM,distM,phiM,feasLocIN,beta,iteration,c):
+    def calculate(self,dataM,distM,phiM,feasLocIN,beta,iteration,c,lag):
         #reset
         self.visited=[]
         self.distance=0
@@ -66,7 +66,7 @@ class Ant:
             while flocs==True:
                 #feasable locs
                 feasLocs=[]
-                for loc in range(len(dataM)):
+                for loc in range(1,len(dataM)):
                     #if loc not in self.visited and vehicle['time']+distM[vehicle['currPos']][loc]+dataM[loc]['service_time']<=dataM[loc]['due_time']:
                     if loc not in self.visited and vehicle['time']+distM[vehicle['currPos']][loc]<=dataM[loc]['due_time']:
                         feasLocs.append(loc)
@@ -87,13 +87,19 @@ class Ant:
                         delta_time=delivery_time-vehicle['time']
                         
                         attr0=delta_time*(feasLocDueTime-vehicle['time'])
+                        
+                        #attract0
+                        #attractL0[feasLoc]=attr0*(1+0.1*feasLocIN[vehicle['currPos']][feasLoc]*(1+lag))
                         attractL0[feasLoc]=attr0
                         attIN0[feasLoc]=feasLocIN[vehicle['currPos']][feasLoc]
+                    
+                    
 
                     maxAttr0=max(attractL0.values())
                     maxIN0=max(attIN0.values())
-
                     
+                   
+                                        
                     for loc in attractL0:
                         #attractL1[loc]=((1+phiM[vehicle['currPos']][loc])*float(maxAttr0/attractL0[loc])**2)*(maxIN0/attIN0[loc])
                         attractL1[loc]=(1+phiM[vehicle['currPos']][loc])*float(maxAttr0/attractL0[loc])**2
@@ -109,7 +115,7 @@ class Ant:
                        
                     self.visited.append(nextLoc)
                    
-                    start_time=max(vehicle['time']+distM[vehicle['currPos']][nextLoc],dataM[nextLoc]['ready_time'])
+                    start_time=max(vehicle['time']+distM[vehicle['currPos']][nextLoc],dataM[nextLoc]['ready_time'])gt
                     end_time=start_time+dataM[nextLoc]['service_time']
                     
                     self.locLog[nextLoc]={'start_time':start_time,
@@ -126,7 +132,7 @@ class Ant:
                     flocs=False
 
         #try inserting unassigned locs
-        for loc in range(len(dataM)):
+        for loc in range(1,len(dataM)):
             if loc not in self.visited:
                 for vehicle in self.vehicles:
                     if loc not in self.visited:

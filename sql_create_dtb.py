@@ -9,6 +9,15 @@ c=conn.cursor()
 #c.execute('DROP TABLE Attr')
 #c.execute('DROP TABLE Summary')
 #c.execute('DROP TABLE FIN')
+c.execute('DROP TABLE FullSols')
+
+#fullSols
+c.execute('''
+    CREATE TABLE FullSols(  iter INTEGER, 
+                            vehCount INTEGER,
+                            visLocs INTEGER)
+''')
+
 
 ##phi
 #c.execute('''
@@ -20,12 +29,14 @@ c=conn.cursor()
 
 
 #fIN
-c.execute('''
-    CREATE TABLE FIN(   iter INTEGER, 
-                        locFrom INTEGER,
-                        locTo INTEGER, 
-                        finval INTEGER)
-''')
+#c.execute('''
+#    CREATE TABLE FIN(   iter INTEGER, 
+#                        locFrom INTEGER,
+#                        locTo INTEGER, 
+#                        finval INTEGER)
+#''')
+
+
 
 
 
