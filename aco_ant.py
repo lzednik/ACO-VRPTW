@@ -13,7 +13,6 @@ class Ant:
         self.tour={}
         self.tour_fl=[]
         self.distance=0
-        self.time=0
         self.vehicles=[]
         self.solution={'vehicles':[],'visited':[],'vehicleCount':self.vehicleCount,'visitedCount':0,'distance':0}
 
@@ -78,12 +77,13 @@ class Ant:
                         nextLoc=random.choice(choiceList)
                     
                                        
-                    start_time=max(vehicle['time']+distM[vehicle['currPos']][nextLoc],dataM[nextLoc]['ready_time'])
+                    
+                    if vehicle['currPos'] == depo:
+                        start_time =dataM[nextLoc]['ready_time']
+                    else:
+                        start_time=max(vehicle['time']+distM[vehicle['currPos']][nextLoc],dataM[nextLoc]['ready_time'])
+                    
                     end_time=start_time+dataM[nextLoc]['service_time']
-                    #
-                    #self.locLog[nextLoc]={'start_time':start_time,
-                    #                      'end_time':end_time
-                    #                     }
                     
                     vehicle['tour'].append(nextLoc)
                     vehicle['time']=end_time

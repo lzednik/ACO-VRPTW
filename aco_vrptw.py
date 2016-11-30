@@ -1,7 +1,15 @@
 from aco_funs import *
 from aco_ant import Ant
+import sqlite3
+
 
 print('run starting')
+
+dtb='Output/Ants.sqlite'
+conn=sqlite3.connect(dtb)
+c=conn.cursor()
+c.execute('DELETE FROM Solutions')
+
 
 dataM=readData('Input/solomon_r101.txt')
 distM=createDistanceMatrix(dataM)
@@ -26,15 +34,32 @@ bestArcs=[]
 bestSolution=initSolution
 
 
-for iteration in range(100):
+for iteration in range(10):
     visitedArcs=[]
-    for colony in range(10):
+    for colony in range(20):
 
         ants=Ant(vehicleCount=vehicleCount,dataM=dataM)
         solution=ants.calculate(dataM,distM,phiM1,depo,tour,tour_fl)
         
         #Full Solution
         if solution['visitedCount']==locCount-1:
+            
+            #log full sols
+            c.execute('''INSERT INTO Solutions(iter,colony, vehCount,visitedCount,visited)
+                         VALUES(?,?,?,?,?)''', (iteration,colony,vehicleCount,solution['visitedCount'],str(solution['visited']))) 
+
+            #log Vehicles
+            for vehicle in solution['vehicles']:
+                c.execute('''INSERT INTO Vehicles(iter,colony, vehNum,tour)
+                            VALUES(?,?,?,?)''', (iteration,colony,vehicle['vehNum'],str(vehicle['tour']))) 
+            
+            
+            #for vehicle in solution['vehicles']:
+            #    vehNum=vehicle['vehNum']
+            #    c.execute('''INSERT INTO Summary(iter,vehNum, tour)
+            #             VALUES(?,?,?)''', (iteration,vehicle['vehNum'],str(vehicle['tour'])))
+
+
             vehicleCount-=1
             tour=solution['tour']
             tour_fl=solution['tour_fl']
@@ -75,4 +100,8 @@ for iteration in range(100):
         print('*******************')
         print('iteration\t',iteration)
         print('*******************')
+
+conn.commit()
+conn.close()
+
 print('run finished')

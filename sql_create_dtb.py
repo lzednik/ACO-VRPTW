@@ -5,18 +5,50 @@ conn=sqlite3.connect(dtb)
 c=conn.cursor()
 
 #c.execute('DROP TABLE Phi')
-#c.execute('DROP TABLE Vehicles')
+c.execute('DROP TABLE Vehicles')
 #c.execute('DROP TABLE Attr')
 #c.execute('DROP TABLE Summary')
 #c.execute('DROP TABLE FIN')
-c.execute('DROP TABLE FullSols')
+c.execute('DROP TABLE Solutions')
 
-#fullSols
+#Solutions
 c.execute('''
-    CREATE TABLE FullSols(  iter INTEGER, 
+    CREATE TABLE Solutions( iter INTEGER,
+                            colony INTEGER,
                             vehCount INTEGER,
-                            visLocs INTEGER)
+                            visitedCount INTEGER,
+                            visited TEXT
+                            )
 ''')
+
+
+##Vehicles
+c.execute('''
+    CREATE TABLE Vehicles(  iter INTEGER,
+                            colony INTEGER,
+                            vehNum INTEGER,
+                            tour TEXT)
+''')
+
+
+
+
+#Vehicles old
+#c.execute('''
+#    CREATE TABLE Vehicles(  iter INTEGER,
+#                            colony INTEGER,
+#                            vehNum INTEGER,
+#                            loc INTEGER, 
+#                            readyTime INTEGER,
+#                            serviceTime INTEGER,
+#                            dueTime INTEGER,
+#                            nextLoc INTEGER,
+#                            distToNext REAL)
+#''')
+#
+
+
+
 
 
 ##phi
@@ -39,18 +71,6 @@ c.execute('''
 
 
 
-
-##Vehicles
-#c.execute('''
-#    CREATE TABLE Vehicles(  iter INTEGER, 
-#                            vehNum INTEGER,
-#                            loc INTEGER, 
-#                            readyTime INTEGER,
-#                            serviceTime INTEGER,
-#                            dueTime INTEGER,
-#                            nextLoc INTEGER,
-#                            distToNext REAL)
-#''')
 
 
 #Attr
