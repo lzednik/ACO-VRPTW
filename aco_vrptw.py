@@ -34,7 +34,7 @@ bestArcs=[]
 bestSolution=initSolution
 
 
-for iteration in range(10):
+for iteration in range(20):
     visitedArcs=[]
     for colony in range(20):
 

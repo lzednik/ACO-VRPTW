@@ -34,7 +34,7 @@ class Ant:
 
                     choiceRand=random.uniform(0,1)
                     nlcr=False
-                    if choiceRand<0.2:
+                    if choiceRand<0.6:
                         if vehicle['currPos']==depo:
                             feasLocsDepo=[]
                             for loc in tour_fl:
@@ -78,10 +78,12 @@ class Ant:
                     
                                        
                     
-                    if vehicle['currPos'] == depo:
-                        start_time =dataM[nextLoc]['ready_time']
-                    else:
-                        start_time=max(vehicle['time']+distM[vehicle['currPos']][nextLoc],dataM[nextLoc]['ready_time'])
+                    #if vehicle['currPos'] == depo:
+                    #    start_time =dataM[nextLoc]['ready_time']
+                    #else:
+                    #    start_time=max(vehicle['time']+distM[vehicle['currPos']][nextLoc],dataM[nextLoc]['ready_time'])
+                    start_time=max(vehicle['time']+distM[vehicle['currPos']][nextLoc],dataM[nextLoc]['ready_time'])
+
                     
                     end_time=start_time+dataM[nextLoc]['service_time']
                     
