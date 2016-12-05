@@ -54,6 +54,17 @@ class Ant:
                         attr0Sum=0
                         attractL1={}
                         choiceList=[]
+                        
+                        #remove tour loc from feaslocs
+#                        if vehicle['currPos']==depo:
+#                            for loc in tour_fl:
+#                                if loc in feasLocs:
+#                                    feasLocs.remove(loc)
+#                        else:
+#                            if vehicle['currPos'] in tour.keys():
+#                                if tour[vehicle['currPos']] in feasLocs:
+#                                    feasLocs.remove(tour[vehicle['currPos']])
+                        
                         #attractivness of feasable locs
                     
                         for feasLoc in feasLocs:

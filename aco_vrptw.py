@@ -11,7 +11,7 @@ c=conn.cursor()
 c.execute('DELETE FROM Solutions')
 
 
-dataM=readData('Input/solomon_r101.txt')
+dataM=readData('Input/solomon_r105.txt')
 distM=createDistanceMatrix(dataM)
 
 depo=0
