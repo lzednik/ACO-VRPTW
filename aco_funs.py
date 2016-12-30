@@ -83,10 +83,19 @@ def initSolution(depo,dataM,distM):
                         'tour':[depo],
                         'currPos':depo,
                         'time':0}
-        
+    
+
+   
     #append last veh
     vehicles.append(vehicle)
-    
+   
+
+    #return back to the depo
+    for vehicle in vehicles:
+        totalDist+=distM[vehicle['tour'][-1]][depo]
+        vehicle['tour'].append(depo)
+
+
     solution={}
     solution['vehicles']=vehicles
     solution['visited']=visited

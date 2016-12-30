@@ -81,6 +81,10 @@ class Ant:
                     
                         for loc in attractL0:
                             attractL1[loc]=int(attr0Sum/((phiM[vehicle['currPos']][loc])*(attractL0[loc])**2))
+                        
+                        mv_al1=max(attractL1.values())
+                        for loc in attractL1:
+                            attractL1[loc]=int(10000*float(attractL1[loc])/mv_al1)
 
                         for loc in attractL1:
                             choiceList+=attractL1[loc]*[loc]
@@ -108,6 +112,11 @@ class Ant:
                 else:
                     flocs=False
         
+        #return to depo
+        for vehicle in self.vehicles:
+            vehicle['tour'].append(depo)
+
+        #calculate distance and tours
         for vehicle in self.vehicles:
             for pos in range(len(vehicle['tour'])-1):
                 self.distance+=distM[vehicle['tour'][pos]][vehicle['tour'][pos+1]]
