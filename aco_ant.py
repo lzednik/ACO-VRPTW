@@ -83,8 +83,9 @@ class Ant:
                             attractL1[loc]=int(attr0Sum/((phiM[vehicle['currPos']][loc])*(attractL0[loc])**2))
                         
                         mv_al1=max(attractL1.values())
-                        for loc in attractL1:
-                            attractL1[loc]=int(10000*float(attractL1[loc])/mv_al1)
+                        if mv_al1>10000:
+                            for loc in attractL1:
+                                attractL1[loc]=int(10000*float(attractL1[loc])/mv_al1)
 
                         for loc in attractL1:
                             choiceList+=attractL1[loc]*[loc]

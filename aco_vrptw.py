@@ -13,7 +13,7 @@ c.execute('DELETE FROM RunSum')
 c.execute('DELETE FROM Vehicles')
 
 
-dataM=readData('Input/solomon_r201.txt')
+dataM=readData('Input/solomon_r101.txt')
 distM=createDistanceMatrix(dataM)
 depo=0
 locCount=len(dataM)
@@ -22,7 +22,7 @@ initSolution=initSolution(depo,dataM,distM)
 
 alpha=0.1
 while alpha <=0.1:
-    for run in range(1):
+    for run in range(100):
         phiM01= [[float(1)/initSolution['vehicleCount'] for i in range(locCount)] for j in range(locCount)]
         phiM02= [[float(1)/initSolution['distance'] for i in range(locCount)] for j in range(locCount)]
         phiM1= [[float(1)/initSolution['vehicleCount'] for i in range(locCount)] for j in range(locCount)]
@@ -132,9 +132,9 @@ while alpha <=0.1:
                      VALUES(?,?,?,?)''', (alpha,run,bestSolution['vehicleCount'],bestSolution['distance'])) 
       
         #log vehicles
-        for vehicle in bestSolution['vehicles']:
-            c.execute('''INSERT INTO Vehicles(vehNum, tour)
-                     VALUES(?,?)''', (vehicle['vehNum'],str(vehicle['tour']))) 
+        #for vehicle in bestSolution['vehicles']:
+        #    c.execute('''INSERT INTO Vehicles(vehNum, tour)
+        #             VALUES(?,?)''', (vehicle['vehNum'],str(vehicle['tour']))) 
       
     alpha+=0.05
     alpha=round(alpha,2)
