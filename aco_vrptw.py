@@ -15,7 +15,7 @@ def aco_setup(input_file,depo):
             'initSol':initSol}
     return(rt)    
 
-def aco_run(dataM,distM,depo,locCount,initSolution,alpha):
+def aco_run(dataM,distM,depo,locCount,initSolution,alpha,BRCP,iterCount,colSize):
     phiM01= [[float(1)/initSolution['vehicleCount'] for i in range(locCount)] for j in range(locCount)]
     phiM02= [[float(1)/initSolution['distance'] for i in range(locCount)] for j in range(locCount)]
     phiM1= [[float(1)/initSolution['vehicleCount'] for i in range(locCount)] for j in range(locCount)]
@@ -35,10 +35,10 @@ def aco_run(dataM,distM,depo,locCount,initSolution,alpha):
     bestSolution=initSolution
 
 
-    for iteration in range(20):
+    for iteration in range(iterCount):
         #visitedArcs1=[]
         #visitedArcs2=[]
-        for colony in range(20):
+        for colony in range(colSize):
 
             colony1=Ant(vehicleCount=vehicleCount1,dataM=dataM)
             colony2=Ant(vehicleCount=vehicleCount2,dataM=dataM)

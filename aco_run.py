@@ -1,4 +1,7 @@
 
+from aco_funs import *
+from aco_vrptw import *
+
 import sys
 from PyQt5.QtCore import pyqtSignal, QSize, Qt
 from PyQt5.QtGui import *
@@ -31,12 +34,14 @@ class slide(QWidget):
         self.lbNme.move(10,1)
         self.lbVal.move(10,20)
 
-        self.sl1=QSlider(Qt.Horizontal,self)
-        self.sl1.move(40,40)
-        self.sl1.valueChanged[int].connect(self.changeValue)
+        self.slide=QSlider(Qt.Horizontal,self)
+        self.slide.move(40,40)
+        self.slide.valueChanged[int].connect(self.slideChangeValue)
     
-    def setSlide(self,nme,tpe,dVal,minVal,maxVal):
         
+        
+    def setSlide(self,nme,tpe,dVal,minVal,maxVal):
+        self.slNme=nme
         self.tpe=tpe
 
         if tpe =='perc':
@@ -59,23 +64,26 @@ class slide(QWidget):
         self.lbNme.setText(nme)
         self.lbNme.adjustSize()
         
-        self.lbVal.setText(str(dVal0))
-        self.lbVal.adjustSize()
+        #self.lbVal.setText(str(dVal0))
+        #self.lbVal.adjustSize()
         
-        self.sl1.setRange(minVal,maxVal)
-        self.sl1.setSingleStep(1)
+        self.slide.setRange(minVal,maxVal)
+        self.slide.setSingleStep(1)
         
+        self.slideChangeValue(dVal)
 
     def sizeHint(self):
         return QSize(180, 80)
  
-    def changeValue(self,value):
+    def slideChangeValue(self,value):
         #print(value)
         if self.tpe=='perc':
             value0=round(value/100.,2)
         if self.tpe=='count':
             value0=value
-
+        
+        slideVals[self.slNme]=value
+        print(slideVals)
         self.lbVal.setText(str(value0))
         self.lbVal.adjustSize()
 
@@ -95,12 +103,97 @@ class filedialog(QWidget):
 		
    def getfile(self):
       inpFile = QFileDialog.getOpenFileName(self, 'Open file','C:\\Users\Lada\Documents\ACO\ACO-VRPTW\Input',"Txt Files (*.txt)")
-      inpFile[0] 
-      self.inpFileLb.setText(inpFile[0])
+      self.inpFilePath=inpFile[0]
+      self.inpFileLb.setText(self.inpFilePath)
       self.inpFileLb.adjustSize()
       
-      print(inpFile)
       #self.le.setPixmap(QPixmap(fname))
+
+class resDisp(QWidget):
+    def __init__(self,titleD,parent=None):
+        QWidget.__init__(self, parent)
+		
+        tFont=QFont()
+        tFont.setBold(True)
+        
+        
+        layout = QGridLayout()
+      
+        self.titleD=QLabel(titleD)
+        self.titleD.setFont(tFont)
+        
+        self.runD = QLabel('Run')	
+        self.runDv = QLabel('0')
+        
+        self.vehCountD = QLabel('Vehicle Count')	
+        self.vehCountDv = QLabel('0')
+
+        self.distD=QLabel('Distance')
+        self.distDv=QLabel('0')
+        
+        layout.addWidget(self.titleD,1,1)
+        
+        layout.addWidget(self.runD,2,1)
+        layout.addWidget(self.runDv,2,2)
+        
+        layout.addWidget(self.vehCountD,3,1)
+        layout.addWidget(self.vehCountDv,3,2)
+        
+        layout.addWidget(self.distD,4,1)
+        layout.addWidget(self.distDv,4,2)
+	 
+        self.setLayout(layout)
+    
+    def dispRefresh(self,run,vehicleCount,distance):
+        self.runDv.setText(str(run+1))
+        self.runDv.adjustSize()
+        
+        self.vehCountDv.setText(str(vehicleCount))
+        self.vehCountDv.adjustSize()
+        
+        self.distDv.setText(str(distance))
+        self.distDv.adjustSize()
+
+def run_bt_clicked(self):
+    print('running')
+    #QApplication.processEvents()
+
+    alpha=0.1
+    depo=0
+    input_file=fd.inpFilePath
+    srt=aco_setup(input_file,depo)
+    dataM=srt['dataM']
+    distM=srt['distM']
+    locCount=srt['locCount']
+    initSol=srt['initSol']
+    
+    alpha=round(slideVals['Alpha']/100.,2)
+    BRCP=round(slideVals['BRCP']/100.,2)
+    runCount=slideVals['Run Count']
+    iterCount=slideVals['Iteration Count']
+    colSize=slideVals['Colony Size']
+    
+    print('alpha',alpha)
+    print('BRCP',BRCP)
+    print('runCount',runCount)
+    print('iterCount',iterCount)
+    print('colSize',colSize)
+    for run in range(runCount):
+        solution=aco_run(dataM,distM,depo,locCount,initSol,alpha,BRCP,iterCount,colSize)
+        if run==0:
+            bestSolution=solution
+        
+        if solution['vehicleCount']< bestSolution['vehicleCount']:
+            bestSolution=solution
+       
+        if solution['vehicleCount']==bestSolution['vehicleCount'] and solution['distance']==bestSolution['distance']:
+            bestSolution=solution        
+        
+        d1.dispRefresh(run,solution['vehicleCount'],solution['distance'])
+        d2.dispRefresh(run,bestSolution['vehicleCount'],bestSolution['distance'])
+        
+        QApplication.processEvents()
+
 
 if __name__ == "__main__":
 
@@ -108,36 +201,48 @@ if __name__ == "__main__":
     window = QWidget()
     window.setWindowTitle('ACO VRPTW')
 
+       
+    slideVals={}
+
+
+    #label = QLabel('hi hi')
+    
+    fd = filedialog()
+    
+    run_bt=QPushButton('RUN ACO')
+    run_bt.setToolTip('run')  
+    run_bt.clicked.connect(run_bt_clicked)
+
+    layout=QGridLayout()
+    
     s1 = slide()
     s2 = slide()
     s3 = slide()
     s4 = slide()
     s5 = slide()
     
-
-    s1.setSlide('Alpha','perc',10,5,50)
-    s2.setSlide('BRSP','perc',60,0,100)
+    
+    s1.setSlide('Alpha','perc',20,5,50)
+    s2.setSlide('BRCP','perc',60,0,100)
     s3.setSlide('Run Count','count',1,1,100)
-    s4.setSlide('Iteration Count','count',20,1,50)
+    s4.setSlide('Iteration Count','count',30,1,50)
     s5.setSlide('Colony Size','count',20,1,100)
+   
+    d1=resDisp('Current Solution')
+    d2=resDisp('Best Solution')
 
-    label = QLabel('hi hi')
-    
-    fd = filedialog()
-    
-    layout=QGridLayout()
-    
     layout.addWidget(s1,1,1)
     layout.addWidget(s2,1,2)
     layout.addWidget(s3,2,1)
     layout.addWidget(s4,2,2)
     layout.addWidget(s5,2,3)
     
+    layout.addWidget(fd,3,1,1,2)
+    layout.addWidget(run_bt,4,1,1,1)
     
-    
-    layout.addWidget(label,3,1)
-    
-    layout.addWidget(fd,5,1,1,2)
+    layout.addWidget(d1,5,1,1,1)
+    layout.addWidget(d2,5,2,1,1)
+
     window.setLayout(layout)
     
 
