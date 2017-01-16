@@ -86,6 +86,7 @@ class slide(QWidget):
         print(slideVals)
         self.lbVal.setText(str(value0))
         self.lbVal.adjustSize()
+        self.slide.setValue(value)
 
 class filedialog(QWidget):
    def __init__(self, parent = None):
@@ -122,8 +123,6 @@ class resDisp(QWidget):
         self.titleD=QLabel(titleD)
         self.titleD.setFont(tFont)
         
-        self.runD = QLabel('Run')	
-        self.runDv = QLabel('0')
         
         self.vehCountD = QLabel('Vehicle Count')	
         self.vehCountDv = QLabel('0')
@@ -133,27 +132,47 @@ class resDisp(QWidget):
         
         layout.addWidget(self.titleD,1,1)
         
-        layout.addWidget(self.runD,2,1)
-        layout.addWidget(self.runDv,2,2)
+        layout.addWidget(self.vehCountD,2,1)
+        layout.addWidget(self.vehCountDv,2,2)
         
-        layout.addWidget(self.vehCountD,3,1)
-        layout.addWidget(self.vehCountDv,3,2)
-        
-        layout.addWidget(self.distD,4,1)
-        layout.addWidget(self.distDv,4,2)
+        layout.addWidget(self.distD,3,1)
+        layout.addWidget(self.distDv,3,2)
 	 
         self.setLayout(layout)
     
-    def dispRefresh(self,run,vehicleCount,distance):
-        self.runDv.setText(str(run+1))
-        self.runDv.adjustSize()
-        
+    def dispRefresh(self,vehicleCount,distance):
         self.vehCountDv.setText(str(vehicleCount))
         self.vehCountDv.adjustSize()
         
         self.distDv.setText(str(distance))
         self.distDv.adjustSize()
 
+class runDisp(QWidget):
+    def __init__(self,parent=None):
+        QWidget.__init__(self, parent)
+		
+        tFont=QFont()
+        tFont.setBold(True)
+        
+        
+        layout = QGridLayout()
+      
+        
+        self.runD = QLabel('Run')	
+        self.runDv = QLabel('0')
+        
+        self.runD.setFont(tFont)
+        self.runDv.setFont(tFont)
+        
+        layout.addWidget(self.runD,1,1)
+        layout.addWidget(self.runDv,1,2)
+    
+        self.setLayout(layout)
+
+    def runRefresh(self,run):
+        self.runDv.setText(str(run+1))
+        self.runDv.adjustSize()
+        
 def run_bt_clicked(self):
     print('running')
     #QApplication.processEvents()
@@ -189,9 +208,10 @@ def run_bt_clicked(self):
         if solution['vehicleCount']==bestSolution['vehicleCount'] and solution['distance']==bestSolution['distance']:
             bestSolution=solution        
         
-        d1.dispRefresh(run,solution['vehicleCount'],solution['distance'])
-        d2.dispRefresh(run,bestSolution['vehicleCount'],bestSolution['distance'])
-        
+        d1.dispRefresh(solution['vehicleCount'],solution['distance'])
+        d2.dispRefresh(bestSolution['vehicleCount'],bestSolution['distance'])
+        rd1.runRefresh(run)
+
         QApplication.processEvents()
 
 
@@ -231,6 +251,8 @@ if __name__ == "__main__":
     d1=resDisp('Current Solution')
     d2=resDisp('Best Solution')
 
+    rd1=runDisp()
+
     layout.addWidget(s1,1,1)
     layout.addWidget(s2,1,2)
     layout.addWidget(s3,2,1)
@@ -240,6 +262,8 @@ if __name__ == "__main__":
     layout.addWidget(fd,3,1,1,2)
     layout.addWidget(run_bt,4,1,1,1)
     
+    layout.addWidget(rd1,4,2,1,1)
+
     layout.addWidget(d1,5,1,1,1)
     layout.addWidget(d2,5,2,1,1)
 
