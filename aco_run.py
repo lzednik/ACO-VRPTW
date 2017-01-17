@@ -6,7 +6,7 @@ import sys
 from PyQt5.QtCore import pyqtSignal, QSize, Qt
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import (QWidget, QSlider, QApplication, 
-    QHBoxLayout, QVBoxLayout,QLabel,QGridLayout,QFileDialog,QPushButton)
+    QHBoxLayout, QVBoxLayout,QLabel,QGridLayout,QFileDialog,QPushButton,QCheckBox)
 
 class slide(QWidget):
 
@@ -154,9 +154,7 @@ class runDisp(QWidget):
         tFont=QFont()
         tFont.setBold(True)
         
-        
         layout = QGridLayout()
-      
         
         self.runD = QLabel('Run')	
         self.runDv = QLabel('0')
@@ -173,6 +171,35 @@ class runDisp(QWidget):
         self.runDv.setText(str(run+1))
         self.runDv.adjustSize()
         
+class researchVar(QWidget):
+    def __init__(self,parent=None):
+        QWidget.__init__(self, parent)
+	    
+        layout = QHBoxLayout()
+        self.b1 = QCheckBox("Button1")
+        self.b1.setChecked(True)
+        self.b1.stateChanged.connect(lambda:self.btnstate(self.b1))
+        layout.addWidget(self.b1)
+		
+        self.b2 = QCheckBox("Button2")
+        self.b2.toggled.connect(lambda:self.btnstate(self.b2))
+
+        layout.addWidget(self.b2)
+        self.setLayout(layout)
+    
+    def btnstate(self,b):
+        if b.text() == "Button1":
+            if b.isChecked() == True:
+                print(b.text()+" is selected")
+            else:
+                print(b.text()+" is deselected")
+				
+        if b.text() == "Button2":
+            if b.isChecked() == True:
+                    print(b.text()+" is selected")
+            else:
+                print(b.text()+" is deselected")
+
 def run_bt_clicked(self):
     print('running')
     #QApplication.processEvents()
@@ -185,7 +212,7 @@ def run_bt_clicked(self):
     distM=srt['distM']
     locCount=srt['locCount']
     initSol=srt['initSol']
-    
+
     alpha=round(slideVals['Alpha']/100.,2)
     BRCP=round(slideVals['BRCP']/100.,2)
     runCount=slideVals['Run Count']
@@ -252,6 +279,7 @@ if __name__ == "__main__":
     d2=resDisp('Best Solution')
 
     rd1=runDisp()
+    rsv1=researchVar()
 
     layout.addWidget(s1,1,1)
     layout.addWidget(s2,1,2)
@@ -259,13 +287,15 @@ if __name__ == "__main__":
     layout.addWidget(s4,2,2)
     layout.addWidget(s5,2,3)
     
-    layout.addWidget(fd,3,1,1,2)
-    layout.addWidget(run_bt,4,1,1,1)
-    
-    layout.addWidget(rd1,4,2,1,1)
+    layout.addWidget(rsv1,3,1,1,1)
 
-    layout.addWidget(d1,5,1,1,1)
-    layout.addWidget(d2,5,2,1,1)
+    layout.addWidget(fd,4,1,1,2)
+    layout.addWidget(run_bt,5,1,1,1)
+    
+    layout.addWidget(rd1,5,2,1,1)
+
+    layout.addWidget(d1,6,1,1,1)
+    layout.addWidget(d2,6,2,1,1)
 
     window.setLayout(layout)
     
