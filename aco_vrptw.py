@@ -1,6 +1,7 @@
 from aco_funs import *
 from aco_ant import Ant
 import sqlite3
+import time
 
 def aco_setup(input_file,depo):
     dataM=readData(input_file)
@@ -42,9 +43,29 @@ def aco_run(dataM,distM,depo,locCount,initSolution,alpha,BRCP,iterCount,colSize)
 
             colony1=Ant(vehicleCount=vehicleCount1,dataM=dataM)
             colony2=Ant(vehicleCount=vehicleCount2,dataM=dataM)
-            solution1=colony1.calculate(dataM,distM,phiM1,depo,tour1,tour_fl1)
-            solution2=colony2.calculate(dataM,distM,phiM2,depo,tour2,tour_fl2)
+            solution1=colony1.calculate(dataM,distM,phiM1,depo,tour1,tour_fl1,BRCP)
+            solution2=colony2.calculate(dataM,distM,phiM2,depo,tour2,tour_fl2,BRCP)
             
+            solution1['iteration']=iteration
+            solution1['colony']=colony
+            solution1['alpha']=alpha
+            solution1['BRCP']=BRCP
+
+
+            solution2['iteration']=iteration
+            solution2['colony']=colony
+            solution2['alpha']=alpha
+            solution2['BRCP']=BRCP
+            
+           #print('uuuuuuuuuuuuuuuuuuuuuuuuu')
+           # print('uuuuuuuuuuuuuuuuuuuuuuuuu')
+           # for x in solution1:
+           #     print(x)
+           # time.sleep(22) 
+           # print('uuuuuuuuuuuuuuuuuuuuuuuuu')
+           # print('uuuuuuuuuuuuuuuuuuuuuuuuu')
+            
+
             #Full Solution 1
             if solution1['visitedCount']==locCount-1:
                 vehicleCount1-=1

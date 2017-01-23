@@ -7,7 +7,7 @@ class Ant:
         self.vehicleCount=vehicleCount 
         self.locLog={}
 
-    def calculate(self,dataM,distM,phiM,depo,tour,tour_fl):
+    def calculate(self,dataM,distM,phiM,depo,tour,tour_fl,BRCP):
         #reset
         self.visited=[]
         self.tour={}
@@ -34,7 +34,7 @@ class Ant:
 
                     choiceRand=random.uniform(0,1)
                     nlcr=False
-                    if choiceRand<0.6:
+                    if choiceRand<BRCP:
                         if vehicle['currPos']==depo:
                             feasLocsDepo=[]
                             for loc in tour_fl:

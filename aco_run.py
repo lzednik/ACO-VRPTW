@@ -1,4 +1,4 @@
-
+import time
 from aco_funs import *
 from aco_vrptw import *
 
@@ -6,7 +6,7 @@ import sys
 from PyQt5.QtCore import pyqtSignal, QSize, Qt
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import (QWidget, QSlider, QApplication, 
-    QHBoxLayout, QVBoxLayout,QLabel,QGridLayout,QFileDialog,QPushButton,QCheckBox)
+    QHBoxLayout, QVBoxLayout,QLabel,QGridLayout,QFileDialog,QPushButton,QCheckBox,QLineEdit)
 
 class slide(QWidget):
 
@@ -124,29 +124,81 @@ class resDisp(QWidget):
         self.titleD.setFont(tFont)
         
         
+        self.iterD=QLabel('Iteration')
+        self.iterDv=QLabel('0')
+       
+        self.iterCountD=QLabel('Iteration Count')
+        self.iterCountDv=QLabel('0')
+        
+        self.colD=QLabel('Colony')
+        self.colDv=QLabel('0')
+        
+        self.colSizeD=QLabel('Colony Size')
+        self.colSizeDv=QLabel('0')
+       
+        self.alphaD=QLabel('Alpha')
+        self.alphaDv=QLabel('0')
+       
+        self.brcpD=QLabel('BiRCP')
+        self.brcpDv=QLabel('0')
+       
         self.vehCountD = QLabel('Vehicle Count')	
         self.vehCountDv = QLabel('0')
 
         self.distD=QLabel('Distance')
         self.distDv=QLabel('0')
-        
+       
+
         layout.addWidget(self.titleD,1,1)
         
-        layout.addWidget(self.vehCountD,2,1)
-        layout.addWidget(self.vehCountDv,2,2)
+        layout.addWidget(self.iterD,2,1)
+        layout.addWidget(self.iterDv,2,2)
+        layout.addWidget(self.iterCountD,3,1)
+        layout.addWidget(self.iterCountDv,3,2)
         
-        layout.addWidget(self.distD,3,1)
-        layout.addWidget(self.distDv,3,2)
+        layout.addWidget(self.colD,4,1)
+        layout.addWidget(self.colDv,4,2)
+        layout.addWidget(self.colSizeD,5,1)
+        layout.addWidget(self.colSizeDv,5,2)
+        
+        layout.addWidget(self.alphaD,6,1)
+        layout.addWidget(self.alphaDv,6,2)
+        
+        layout.addWidget(self.brcpD,7,1)
+        layout.addWidget(self.brcpDv,7,2)
+        
+        layout.addWidget(self.vehCountD,8,1)
+        layout.addWidget(self.vehCountDv,8,2)
+
+        layout.addWidget(self.distD,9,1)
+        layout.addWidget(self.distDv,9,2)
 	 
         self.setLayout(layout)
     
-    def dispRefresh(self,vehicleCount,distance):
+    def dispRefresh(self,vehicleCount,distance,iteration,iterationCount,colony,colonySize,alpha,BRCP):
         self.vehCountDv.setText(str(vehicleCount))
         self.vehCountDv.adjustSize()
         
         self.distDv.setText(str(distance))
         self.distDv.adjustSize()
 
+        self.iterDv.setText(str(iteration))
+        self.iterDv.adjustSize()
+        
+        self.iterCountDv.setText(str(iterationCount))
+        self.iterDv.adjustSize()
+
+        self.colDv.setText(str(colony))
+        self.colDv.adjustSize()
+        
+        self.colSizeDv.setText(str(colonySize))
+        self.colSizeDv.adjustSize()
+
+        self.alphaDv.setText(str(alpha))
+        self.alphaDv.adjustSize()
+        
+        self.brcpDv.setText(str(BRCP))
+        self.brcpDv.adjustSize()
 class runDisp(QWidget):
     def __init__(self,parent=None):
         QWidget.__init__(self, parent)
@@ -176,35 +228,85 @@ class researchVar(QWidget):
         QWidget.__init__(self, parent)
 	    
         layout = QHBoxLayout()
-        self.b1 = QCheckBox("Button1")
-        self.b1.setChecked(True)
-        self.b1.stateChanged.connect(lambda:self.btnstate(self.b1))
+        
+        self.b1 = QPushButton("Alpha")
+        self.b1.setCheckable(True)
+        self.b1.clicked[bool].connect(lambda:self.btnstate(self.b1))
         layout.addWidget(self.b1)
 		
-        self.b2 = QCheckBox("Button2")
-        self.b2.toggled.connect(lambda:self.btnstate(self.b2))
-
+        self.b2 = QPushButton("BRCP")
+        self.b2.setCheckable(True)
+        self.b2.clicked[bool].connect(lambda:self.btnstate(self.b2))
         layout.addWidget(self.b2)
+    
+        self.b3 = QPushButton("Colony Size")
+        self.b3.setCheckable(True)
+        self.b3.clicked[bool].connect(lambda:self.btnstate(self.b3))
+        layout.addWidget(self.b3)
+        
+        self.fromL=QLabel('From')
+        self.fromLv=QLineEdit()
+        layout.addWidget(self.fromL)
+        layout.addWidget(self.fromLv)
+
+        self.toL=QLabel('To')
+        self.toLv=QLineEdit()
+        layout.addWidget(self.toL)
+        layout.addWidget(self.toLv)
+        
+        self.stepL=QLabel('Step')
+        self.stepLv=QLineEdit()
+        layout.addWidget(self.stepL)
+        layout.addWidget(self.stepLv)
+       
+        self.resVar='None'
         self.setLayout(layout)
     
     def btnstate(self,b):
-        if b.text() == "Button1":
-            if b.isChecked() == True:
-                print(b.text()+" is selected")
+        self.resVar='None'
+        if b.text()=='Alpha':
+            self.b2.setChecked(False)
+            self.b3.setChecked(False)
+            if self.b1.isChecked():
+                self.resVar='Alpha'
             else:
-                print(b.text()+" is deselected")
-				
-        if b.text() == "Button2":
-            if b.isChecked() == True:
-                    print(b.text()+" is selected")
+                self.resVar='None'
+        if b.text()=='BRCP':
+            self.b1.setChecked(False)
+            self.b3.setChecked(False)
+            if self.b2.isChecked():
+                self.resVar='BRCP'
             else:
-                print(b.text()+" is deselected")
+                self.resVar='None'
+        
+        if b.text()=='Colony Size':
+            self.b1.setChecked(False)
+            self.b2.setChecked(False)
+            if self.b3.isChecked():
+                self.resVar='Colony Size'
+            else:
+                self.resVar='None'
+        print(self.resVar)
 
 def run_bt_clicked(self):
     print('running')
     #QApplication.processEvents()
+    #aco_dtb
+    dtb='Output/aco_dtb.sqlite'
+    conn=sqlite3.connect(dtb)
+    c=conn.cursor()
+    c.execute('DELETE FROM Solutions')
 
-    alpha=0.1
+    rsv=rsv1.resVar
+    if rsv == 'None':
+        rsvFrom=1
+        rsvTo=1
+        rsvStep=1
+    else:
+        rsvFrom=round(float(rsv1.fromLv.text()),2)
+        rsvTo=round(float(rsv1.toLv.text()),2)
+        rsvStep=round(float(rsv1.stepLv.text()),2)
+    
     depo=0
     input_file=fd.inpFilePath
     srt=aco_setup(input_file,depo)
@@ -225,22 +327,44 @@ def run_bt_clicked(self):
     print('iterCount',iterCount)
     print('colSize',colSize)
     for run in range(runCount):
-        solution=aco_run(dataM,distM,depo,locCount,initSol,alpha,BRCP,iterCount,colSize)
-        if run==0:
-            bestSolution=solution
         
-        if solution['vehicleCount']< bestSolution['vehicleCount']:
-            bestSolution=solution
-       
-        if solution['vehicleCount']==bestSolution['vehicleCount'] and solution['distance']==bestSolution['distance']:
-            bestSolution=solution        
-        
-        d1.dispRefresh(solution['vehicleCount'],solution['distance'])
-        d2.dispRefresh(bestSolution['vehicleCount'],bestSolution['distance'])
-        rd1.runRefresh(run)
+        rsvV=rsvFrom
+        while rsvV<=rsvTo:
+            if rsv=='Alpha':
+                alpha=rsvV
+            if rsv=='BRCP':
+                BRCP=rsvV
+            if rsv=='Colony Size':
+                colSize=int(rsvV)
 
-        QApplication.processEvents()
+            solution=aco_run(dataM,distM,depo,locCount,initSol,alpha,BRCP,iterCount,colSize)
 
+            c.execute('''INSERT INTO Solutions(run,iteration,iterCount,colony,colonySize,alpha,BRCP,vehCount,distance)
+            VALUES(?,?,?,?,?,?,?,?,?)''', (run,solution['iteration'],iterCount,solution['colony'],colSize,alpha,BRCP,solution['vehicleCount'],solution['distance'])) 
+            conn.commit()
+
+            bsRefresh=False
+            if run==0:
+                bestSolution=solution
+                bsRefresh=True
+
+            if solution['vehicleCount']< bestSolution['vehicleCount']:
+                bestSolution=solution
+                bsRefresh=True
+            if solution['vehicleCount']==bestSolution['vehicleCount'] and solution['distance']==bestSolution['distance']:
+                bestSolution=solution        
+                bsRefresh=True
+
+            d1.dispRefresh(solution['vehicleCount'],solution['distance'],solution['iteration'],iterCount,solution['colony'],colSize,alpha,BRCP)
+            if bsRefresh==True:
+                d2.dispRefresh(bestSolution['vehicleCount'],bestSolution['distance'],bestSolution['iteration'],iterCount,bestSolution['colony'],colSize,alpha,BRCP)
+            
+            rd1.runRefresh(run)
+            
+            rsvV+=rsvStep
+            rsvV=round(rsvV,2)
+            QApplication.processEvents()
+    conn.close()        
 
 if __name__ == "__main__":
 
@@ -248,9 +372,8 @@ if __name__ == "__main__":
     window = QWidget()
     window.setWindowTitle('ACO VRPTW')
 
-       
     slideVals={}
-
+    
 
     #label = QLabel('hi hi')
     
@@ -287,7 +410,7 @@ if __name__ == "__main__":
     layout.addWidget(s4,2,2)
     layout.addWidget(s5,2,3)
     
-    layout.addWidget(rsv1,3,1,1,1)
+    layout.addWidget(rsv1,3,1,1,3)
 
     layout.addWidget(fd,4,1,1,2)
     layout.addWidget(run_bt,5,1,1,1)
@@ -299,8 +422,5 @@ if __name__ == "__main__":
 
     window.setLayout(layout)
     
-
-    
-
     window.show()
     sys.exit(app.exec_())
