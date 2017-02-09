@@ -1,19 +1,37 @@
+import sqlite3
 
-from aco_funs import *
-from aco_vrptw import *
+dtb='Output/aco_dtb.sqlite'
+conn=sqlite3.connect(dtb)
+c=conn.cursor()
+#c.execute('select vehCount, count(distinct idVar) FROM Solutions group by vehCount')
+c.execute('select vehCount, colonySize,count(distinct idVar) as c FROM Solutions group by vehCount,colonySize')
+rows = c.fetchall()
+
+xobjs=[]
+yobjs=[]
+for row in rows:
+    print(row)
+    xobjs.append(row[0])
+    yobjs.append(row[1])
+conn.close()
 
 
 
+import matplotlib.pyplot as plt; plt.rcdefaults()
+import numpy as np
+import matplotlib.pyplot as plt
 
-alpha=0.1
-depo=0
-input_file='Input/solomon_r101.txt'
 
-srt=aco_setup(input_file,depo)
-dataM=srt['dataM']
-distM=srt['distM']
-locCount=srt['locCount']
-initSol=srt['initSol']
+objects = ('Python', 'C++', 'Java', 'Perl', 'Scala', 'Lisp')
+y_pos = np.arange(len(objects))
+print(y_pos)
+performance = [10,8,6,4,2,1]
+ 
+plt.bar(xobjs, yobjs, align='center', alpha=0.5)
 
-bs=aco_run(dataM,distM,depo,locCount,initSol,alpha)
-
+plt.xticks(xobjs)
+plt.ylabel('Run Counts')
+plt.xlabel('Vehicle Counts')
+plt.title('ACO_VRPTW')
+ 
+plt.show()

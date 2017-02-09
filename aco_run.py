@@ -296,6 +296,7 @@ def run_bt_clicked(self):
     conn=sqlite3.connect(dtb)
     c=conn.cursor()
     c.execute('DELETE FROM Solutions')
+    c.execute('DELETE FROM Vehicles')
 
     rsv=rsv1.resVar
     if rsv == 'None':
@@ -326,6 +327,8 @@ def run_bt_clicked(self):
     print('runCount',runCount)
     print('iterCount',iterCount)
     print('colSize',colSize)
+
+    id_var=1
     for run in range(runCount):
         
         rsvV=rsvFrom
@@ -339,8 +342,14 @@ def run_bt_clicked(self):
 
             solution=aco_run(dataM,distM,depo,locCount,initSol,alpha,BRCP,iterCount,colSize)
 
-            c.execute('''INSERT INTO Solutions(run,iteration,iterCount,colony,colonySize,alpha,BRCP,vehCount,distance)
-            VALUES(?,?,?,?,?,?,?,?,?)''', (run,solution['iteration'],iterCount,solution['colony'],colSize,alpha,BRCP,solution['vehicleCount'],solution['distance'])) 
+            c.execute('''INSERT INTO Solutions(idVar,run,iteration,iterCount,colony,colonySize,alpha,BRCP,vehCount,distance)
+      VALUES(?,?,?,?,?,?,?,?,?,?)''', (id_var,run,solution['iteration'],iterCount,solution['colony'],colSize,alpha,BRCP,solution['vehicleCount'],solution['distance'])) 
+           
+            for veh in solution['vehicles']:
+                c.execute('''INSERT INTO Vehicles(idVar,vehNum,vehTour)
+                           VALUES(?,?,?)''', (id_var,veh['vehNum'],str(veh['tour']))) 
+            
+            id_var+=1
             conn.commit()
 
             bsRefresh=False
