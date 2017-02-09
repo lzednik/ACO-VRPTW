@@ -18,8 +18,10 @@ c.execute('DROP TABLE schedule')
 c.execute('''
     CREATE TABLE schedule(  cm_id INTEGER,
                             mbr_id INTEGER,
-                            svc_date REAL,
-                            svc_time INTEGER,
+                            svc_dt REAL,
+                            svc_tm_from INTEGER,
+                            svc_tm_to INTEGER,
+                            svc_tm_actual INTEGER,
                             svc_len INTEGER
                       )
 ''')

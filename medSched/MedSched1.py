@@ -50,7 +50,7 @@ class careMans(QWidget):
         layout = QGridLayout()
         
         
-        self.lb1=QLabel('Care Managers:')
+        self.lb1=QLabel('Care Manager:')
         self.cmb1=QComboBox()
         
         self.cmb1.activated[str].connect(self.onActivated) 
@@ -60,13 +60,16 @@ class careMans(QWidget):
         
         self.setLayout(layout)
     
-    def onActivated(self, text):
-        print('cmb box:',text)
+    def onActivated(self, cm_t):
+        print('cmb box:',cm_t)
+        tbs.setTableItem(cm_t)
+        
 
     def addCM(self,cm_list):
         self.cmb1.clear()
         for cm in cm_list:
-            self.cmb1.addItem('cm '+str(cm[0]))
+            self.cmb1.addItem(str(cm[0]))
+
 
 class tbSched(QWidget):
     def __init__(self,parent=None):
@@ -80,35 +83,35 @@ class tbSched(QWidget):
         #self.table.setWindowTitle('CARE MANAGER #1')
         #self.table.resize(300, 300)
         self.table.setRowCount(5)
-        self.table.setColumnCount(3)
+        self.table.setColumnCount(5)
         
         
         # set label
-        self.table.setHorizontalHeaderLabels(['Member','Appt Time','Address'])
+        self.table.setHorizontalHeaderLabels(['Member','Svc From','Svc To','Svc Actual','Address'])
         #table.setVerticalHeaderLabels(QString("V1;V2;V3;V4").split(";"))
  
         # set data
-        self.table.setItem(0,0, QTableWidgetItem("1"))
-        self.table.setItem(1,0, QTableWidgetItem("2"))
-        self.table.setItem(2,0, QTableWidgetItem("3"))
-        self.table.setItem(3,0, QTableWidgetItem("4"))
-        self.table.setItem(4,0, QTableWidgetItem("5"))
+        #self.table.setItem(0,0, QTableWidgetItem("1"))
+        #self.table.setItem(1,0, QTableWidgetItem("2"))
+        #self.table.setItem(2,0, QTableWidgetItem("3"))
+        #self.table.setItem(3,0, QTableWidgetItem("4"))
+        #self.table.setItem(4,0, QTableWidgetItem("5"))
         
-        self.table.setItem(0,1, QTableWidgetItem("10:15"))
-        self.table.setItem(1,1, QTableWidgetItem("12:30"))
-        self.table.setItem(2,1, QTableWidgetItem("2:10"))
-        self.table.setItem(3,1, QTableWidgetItem("3:30"))
-        self.table.setItem(4,1, QTableWidgetItem("5:15"))
+        #self.table.setItem(0,1, QTableWidgetItem("10:15"))
+        #self.table.setItem(1,1, QTableWidgetItem("12:30"))
+        #self.table.setItem(2,1, QTableWidgetItem("2:10"))
+        #self.table.setItem(3,1, QTableWidgetItem("3:30"))
+        #self.table.setItem(4,1, QTableWidgetItem("5:15"))
 
-        self.table.setItem(0,2, QTableWidgetItem("6521 Edgewood St Rockford, MN 55373"))
-        self.table.setItem(1,2, QTableWidgetItem("401 Carlson Pkwy Minnetonka, MN 55115"))
-        self.table.setItem(2,2, QTableWidgetItem("7659 78th Av NE Brooklyn Center, MN 55776"))
-        self.table.setItem(3,2, QTableWidgetItem("89766 1st St SW Bloomington, MN 55433"))
-        self.table.setItem(4,2, QTableWidgetItem("112233 ACO Street Ant City, MN, 55555"))
+        #self.table.setItem(0,2, QTableWidgetItem("6521 Edgewood St Rockford, MN 55373"))
+        #self.table.setItem(1,2, QTableWidgetItem("401 Carlson Pkwy Minnetonka, MN 55115"))
+        #self.table.setItem(2,2, QTableWidgetItem("7659 78th Av NE Brooklyn Center, MN 55776"))
+        #self.table.setItem(3,2, QTableWidgetItem("89766 1st St SW Bloomington, MN 55433"))
+        #self.table.setItem(4,2, QTableWidgetItem("112233 ACO Street Ant City, MN, 55555"))
         
 
 
-        self.table.setColumnWidth(2,250)
+        self.table.setColumnWidth(5,250)
         self.table.horizontalHeader().setStretchLastSection(True)
         #header = self.table.horizontalHeader()
         #header.setStretchLastSection(True)
@@ -129,6 +132,31 @@ class tbSched(QWidget):
         
         self.setLayout(layout)
 
+    def setTableItem(self,cm_t):
+        conn=sqlite3.connect(dtb)
+        c=conn.cursor()
+        print('CMT IS',cm_t)
+        c.execute('''select a.mbr_id, 
+                            a.svc_tm_from,
+                            a.svc_tm_to,
+                            a.svc_tm_actual,
+                            b.full_addr
+                    from    schedule a,
+                            mbrs b
+                    where   a.mbr_id = b.mbr_id and
+                            cm_id =?''',(cm_t,))
+        
+        recs=c.fetchall()
+        for pos in range(len(recs)):
+            print('col 1',pos,recs[pos][0])
+            self.table.setItem(pos,0, QTableWidgetItem(str(recs[pos][0])))
+            self.table.setItem(pos,1, QTableWidgetItem(str(recs[pos][1])))
+            self.table.setItem(pos,2, QTableWidgetItem(str(recs[pos][2])))
+            self.table.setItem(pos,3, QTableWidgetItem(str(recs[pos][3])))
+            self.table.setItem(pos,4, QTableWidgetItem(str(recs[pos][4])))
+        conn.close()
+ 
+        #self.table.setItem(0,0, QTableWidgetItem('hello'))
 
 def cellClick(row,col):
     print("Click on " + str(row) + " " + str(col))
@@ -142,7 +170,7 @@ def calClick(date):
     
     c.execute('''select distinct cm_id
                 from schedule
-                where svc_date =?''',(sd,))
+                where svc_dt =?''',(sd,))
         
     cm_list=c.fetchall()
     for cm in cm_list:
@@ -162,7 +190,7 @@ if __name__ == "__main__":
     cal1=QCalendarWidget()
     cal1.clicked[QDate].connect(calClick)
    
-    layout.addWidget(cal1,1,1,1,2)
+    layout.addWidget(cal1,1,1,1,1)
     #wc=5
 
     #wl=[]
@@ -178,12 +206,16 @@ if __name__ == "__main__":
 
     crm=careMans()
     tbs=tbSched()
-
+    
+    placeHold=QLabel('                                                                             ')
+    layout.addWidget(placeHold,1,2,1,1)
+    
     layout.addWidget(crm,2,1,1,1)
-    layout.addWidget(tbs,3,1,1,1)
+
+    layout.addWidget(tbs,3,1,1,2)
 
     
-    window.setGeometry(50, 50, 500, 500)
+    window.setGeometry(50, 50, 900, 500)
     window.setLayout(layout)
     window.show()
     sys.exit(app.exec_())
