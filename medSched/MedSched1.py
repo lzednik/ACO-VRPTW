@@ -9,40 +9,109 @@ import sqlite3
 dtb='data_files/medSched.sqlite'
 
  
-#class tbWin(QWidget):
-#     
-#    def __init__(self, parent= None):
-#        QWidget.__init__(self, parent)
-#        self.setFixedHeight(200)
-#         
-#        #Container Widget        
-#        widget = QWidget()
-#        #Layout of Container Widget
-#        layout = QVBoxLayout(self)
+class newAppt(QWidget):
+    def __init__(self,parent=None):
+        QWidget.__init__(self, parent)
+        layout = QGridLayout()
+        
+        tFont=QFont()
+        tFont.setBold(True)
+        
+        self.lbTitle=QLabel('                                        Create New Appointment                                        ')
+        self.lbTitle.setFont(tFont)
+        
+        self.st0=slideT0()
+        self.st1=slideT0()
+
+        layout.addWidget(self.lbTitle,1,1,1,2)
+        layout.addWidget(self.st0,2,1)
+        layout.addWidget(self.st1,2,2)
+        self.setLayout(layout)
+    
+
+class slideT0(QWidget):
+
+    clicked = pyqtSignal()
+    
+    def __init__(self, parent = None):
+    
+        QWidget.__init__(self, parent)
+       
+        tFont=QFont()
+        tFont.setBold(True)
+
+        self.lbMin=QLabel('FROM',self)
+        self.lbMax=QLabel('TO',self)
+        self.lbNme=QLabel('TIME',self)
+        self.lbVal=QLabel('',self)
+
+        self.lbMin.setFont(tFont)
+        self.lbMax.setFont(tFont)
+        self.lbNme.setFont(tFont)
+        self.lbVal.setFont(tFont)
+
+        self.lbMin.move(0,40)
+        self.lbMax.move(140,40)
+        self.lbNme.move(10,1)
+        self.lbVal.move(10,20)
+
+        self.slide=QSlider(Qt.Horizontal,self)
+        self.slide.move(40,40)
+        
+        #self.slide=QSlider(Qt.Horizontal,self)
+        #self.slide.move(40,40)
+        #self.slide.valueChanged[int].connect(self.slideChangeValue)
+    
+        
+        
+#    def setSlide(self,nme,tpe,dVal,minVal,maxVal):
+#        self.slNme=nme
+#        self.tpe=tpe
+#
+#        if tpe =='perc':
+#            dVal0=round(dVal/100.,2)
+#            minVal0=round(minVal/100.,2)
+#            maxVal0=round(maxVal/100.,2)
 #        
-#        tb1=tbSched()
-#        tb2=tbSched()
-#        tb3=tbSched()
-#        layout.addWidget(tb1)
-#        layout.addWidget(tb2)
-#        layout.addWidget(tb3)
+#        if tpe=='count':
+#            dVal0=dVal
+#            minVal0=minVal
+#            maxVal0=maxVal
+#
+#
+#        self.lbMin.setText(str(minVal0))
+#        self.lbMin.adjustSize()
+#    
+#        self.lbMax.setText(str(maxVal0))
+#        self.lbMax.adjustSize()
 #        
-#        #for _ in range(20):
-#        #    btn = QPushButton("test")
-#        #    layout.addWidget(btn)
-#        widget.setLayout(layout)
+#        self.lbNme.setText(nme)
+#        self.lbNme.adjustSize()
+#        
+#        #self.lbVal.setText(str(dVal0))
+#        #self.lbVal.adjustSize()
+#        
+#        self.slide.setRange(minVal,maxVal)
+#        self.slide.setSingleStep(1)
+#        
+#        self.slideChangeValue(dVal)
+#
+#    def sizeHint(self):
+#        return QSize(180, 80)
 # 
-#        #Scroll Area Properties
-#        scroll = QScrollArea()
-#        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-#        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-#        scroll.setWidgetResizable(False)
-#        scroll.setWidget(widget)
-#         
-#        #Scroll Area Layer add 
-#        vLayout = QVBoxLayout(self)
-#        vLayout.addWidget(scroll)
-#        self.setLayout(vLayout)
+#    def slideChangeValue(self,value):
+#        #print(value)
+#        if self.tpe=='perc':
+#            value0=round(value/100.,2)
+#        if self.tpe=='count':
+#            value0=value
+#        
+#        slideVals[self.slNme]=value
+#        print(slideVals)
+#        self.lbVal.setText(str(value0))
+#        self.lbVal.adjustSize()
+#        self.slide.setValue(value)
+
 
 class careMans(QWidget):
     def __init__(self,parent=None):
@@ -60,10 +129,9 @@ class careMans(QWidget):
         
         self.setLayout(layout)
     
-    def onActivated(self, cm_t):
-        print('cmb box:',cm_t)
-        tbs.setTableItem(cm_t)
-        
+    def onActivated(self, cm_id):
+        tbs.setCMTable(cm_id)
+        #print('cal date is:',cal1.selectedDate().toPyDate())
 
     def addCM(self,cm_list):
         self.cmb1.clear()
@@ -90,52 +158,31 @@ class tbSched(QWidget):
         self.table.setHorizontalHeaderLabels(['Member','Svc From','Svc To','Svc Actual','Address'])
         #table.setVerticalHeaderLabels(QString("V1;V2;V3;V4").split(";"))
  
-        # set data
-        #self.table.setItem(0,0, QTableWidgetItem("1"))
-        #self.table.setItem(1,0, QTableWidgetItem("2"))
-        #self.table.setItem(2,0, QTableWidgetItem("3"))
-        #self.table.setItem(3,0, QTableWidgetItem("4"))
-        #self.table.setItem(4,0, QTableWidgetItem("5"))
-        
-        #self.table.setItem(0,1, QTableWidgetItem("10:15"))
-        #self.table.setItem(1,1, QTableWidgetItem("12:30"))
-        #self.table.setItem(2,1, QTableWidgetItem("2:10"))
-        #self.table.setItem(3,1, QTableWidgetItem("3:30"))
-        #self.table.setItem(4,1, QTableWidgetItem("5:15"))
-
-        #self.table.setItem(0,2, QTableWidgetItem("6521 Edgewood St Rockford, MN 55373"))
-        #self.table.setItem(1,2, QTableWidgetItem("401 Carlson Pkwy Minnetonka, MN 55115"))
-        #self.table.setItem(2,2, QTableWidgetItem("7659 78th Av NE Brooklyn Center, MN 55776"))
-        #self.table.setItem(3,2, QTableWidgetItem("89766 1st St SW Bloomington, MN 55433"))
-        #self.table.setItem(4,2, QTableWidgetItem("112233 ACO Street Ant City, MN, 55555"))
-        
-
 
         self.table.setColumnWidth(5,250)
         self.table.horizontalHeader().setStretchLastSection(True)
-        #header = self.table.horizontalHeader()
-        #header.setStretchLastSection(True)
-        #self.table.resizeColumnsToContents()
-        #self.table.resizeColumnToContents(0)
-        #self.table.resizeColumnToContents(1)
-        #self.table.resizeColumnToContents(2)
-        
         
         
         # on click function
-        self.table.cellClicked.connect(cellClick)
+        #self.table.cellClicked.connect(cellClick)
         
-        self.lb1=QLabel('Care Manager #1')
+        self.CMlb1=QLabel('')
        
-        layout.addWidget(self.lb1,1,1)
+        layout.addWidget(self.CMlb1,1,1)
         layout.addWidget(self.table,2,1)
         
         self.setLayout(layout)
 
-    def setTableItem(self,cm_t):
+    def setCMTable(self,cm_id):
         conn=sqlite3.connect(dtb)
         c=conn.cursor()
-        print('CMT IS',cm_t)
+        print('CMT IS',cm_id)
+        print('cal date is:',cal1.selectedDate().toPyDate())
+        svc_dt=cal1.selectedDate().toPyDate()
+
+        self.CMlb1.setText('Care Manager #'+str(cm_id))
+        self.CMlb1.adjustSize()
+
         c.execute('''select a.mbr_id, 
                             a.svc_tm_from,
                             a.svc_tm_to,
@@ -144,11 +191,10 @@ class tbSched(QWidget):
                     from    schedule a,
                             mbrs b
                     where   a.mbr_id = b.mbr_id and
-                            cm_id =?''',(cm_t,))
+                            cm_id =? and svc_dt =?''',(cm_id,svc_dt,))
         
         recs=c.fetchall()
         for pos in range(len(recs)):
-            print('col 1',pos,recs[pos][0])
             self.table.setItem(pos,0, QTableWidgetItem(str(recs[pos][0])))
             self.table.setItem(pos,1, QTableWidgetItem(str(recs[pos][1])))
             self.table.setItem(pos,2, QTableWidgetItem(str(recs[pos][2])))
@@ -158,8 +204,8 @@ class tbSched(QWidget):
  
         #self.table.setItem(0,0, QTableWidgetItem('hello'))
 
-def cellClick(row,col):
-    print("Click on " + str(row) + " " + str(col))
+#def cellClick(row,col):
+#    print("Click on " + str(row) + " " + str(col))
 
 def calClick(date):
 
@@ -178,6 +224,8 @@ def calClick(date):
     
     crm.addCM(cm_list)
     conn.close()
+
+
 if __name__ == "__main__":
 
     app = QApplication(sys.argv)
@@ -189,31 +237,14 @@ if __name__ == "__main__":
     
     cal1=QCalendarWidget()
     cal1.clicked[QDate].connect(calClick)
-   
-    layout.addWidget(cal1,1,1,1,1)
-    #wc=5
-
-    #wl=[]
-    #for w in range(wc):
-    #    widName='Widget '+str(w)
-    #    wl.append(QLabel(widName))
-
-    
-    #for pos in range(len(wl)):
-    #    layout.addWidget(wl[pos],pos+3,1)
-
-    #tb1=tbSched()
-
     crm=careMans()
     tbs=tbSched()
-    
-    placeHold=QLabel('                                                                             ')
-    layout.addWidget(placeHold,1,2,1,1)
-    
+    nappt=newAppt()
+
+    layout.addWidget(cal1,1,1,1,1)
+    layout.addWidget(nappt,1,2,1,1)
     layout.addWidget(crm,2,1,1,1)
-
     layout.addWidget(tbs,3,1,1,2)
-
     
     window.setGeometry(50, 50, 900, 500)
     window.setLayout(layout)
