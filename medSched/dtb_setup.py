@@ -12,19 +12,25 @@ conn=sqlite3.connect(dtb)
 c=conn.cursor()
 
 #c.execute('DROP TABLE outZipDT')
-c.execute('DROP TABLE schedule')
+#c.execute('DROP TABLE schedule')
 
 
 c.execute('''
-    CREATE TABLE schedule(  cm_id INTEGER,
-                            mbr_id INTEGER,
-                            svc_dt REAL,
-                            svc_tm_from INTEGER,
-                            svc_tm_to INTEGER,
-                            svc_tm_actual INTEGER,
-                            svc_len INTEGER
+    CREATE TABLE cmAvlblt(  svc_dt REAL,
+                            cm_ct INTEGER
                       )
 ''')
+
+#c.execute('''
+#    CREATE TABLE schedule(  cm_id INTEGER,
+#                            mbr_id INTEGER,
+#                            svc_dt REAL,
+#                            svc_tm_from INTEGER,
+#                            svc_tm_to INTEGER,
+#                            svc_tm_actual INTEGER,
+#                            svc_len INTEGER
+#                      )
+#''')
 
 #c.execute('''
 #    CREATE TABLE mbrs(mbr_id INTEGER,

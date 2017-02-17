@@ -14,103 +14,209 @@ class newAppt(QWidget):
         QWidget.__init__(self, parent)
         layout = QGridLayout()
         
+        lbFont=QFont()
+        lbFont.setPointSize(10)
+        lbFont.setBold(True)
+
+
+
+        self.lbTitle=QLabel('                           Create New Appointment                          ')
+        self.lbTitle.setFont(lbFont)
+        
+        self.mbr1=mbrSelection()
+        self.slds=sliders()
+        self.checkAveB=QPushButton('Check Availability')
+        self.checkAveB.clicked.connect(self.checkAvb)
+        
+        self.appStatL=QLabel('Available')
+        
+        self.confB=QPushButton('Confirm')
+        
+        layout.addWidget(self.lbTitle,1,1,1,2)
+        layout.addWidget(self.mbr1,2,1,1,1)
+        layout.addWidget(self.slds,3,1,1,2)
+        layout.addWidget(self.checkAveB,4,1,1,2)
+        layout.addWidget(self.appStatL,5,1,1,1)
+        layout.addWidget(self.confB,5,2,1,1)
+
+        self.setLayout(layout)
+        
+    #Checking Availability 
+    #ACO VRPTW Implementation
+    def checkAvb(self):
+        print('checking availability')
+        #create DataM
+        conn=sqlite3.connect(dtb)
+        c=conn.cursor()
+        svc_dt=cal1.selectedDate().toPyDate()
+        c.execute('''select mbr_id, 
+                            svc_tm_from,
+                            svc_tm_to
+                    from    schedule
+                    where   svc_dt =?''',(svc_dt,))
+        
+        recs=c.fetchall()
+        dataM=[]
+        rec0={}
+        for rec in recs:
+            rec0['cust_no']=rec[0]
+            rec0['ready_time']=rec[1]
+            rec0['due_time']=rec[2]
+            rec0['service_time']=0
+
+        
+
+
+
+
+
+
+
+
+        conn.close()
+
+        #solution=aco_run(dataM,distM,depo,locCount,initSol,alpha,BRCP,iterCount,colSize)
+
+
+
+
+
+class mbrSelection(QWidget):
+    def __init__(self,parent = None):
+        QWidget.__init__(self, parent)
+    
+        layout = QGridLayout()
+        
         tFont=QFont()
         tFont.setBold(True)
-        
-        self.lbTitle=QLabel('                                        Create New Appointment                                        ')
-        self.lbTitle.setFont(tFont)
-        
-        self.st0=slideT0()
-        self.st1=slideT0()
 
-        layout.addWidget(self.lbTitle,1,1,1,2)
-        layout.addWidget(self.st0,2,1)
-        layout.addWidget(self.st1,2,2)
+        self.lb1=QLabel('Member')
+        
+        self.lb1.setFont(tFont)
+        
+
+        layout.addWidget(self.lb1,1,1)
+
         self.setLayout(layout)
-    
+        
 
-class slideT0(QWidget):
+
+
+class sliders(QWidget):
 
     clicked = pyqtSignal()
     
-    def __init__(self, parent = None):
+    def __init__(self,parent = None):
     
         QWidget.__init__(self, parent)
-       
+      
+
+
         tFont=QFont()
         tFont.setBold(True)
-
-        self.lbMin=QLabel('FROM',self)
-        self.lbMax=QLabel('TO',self)
-        self.lbNme=QLabel('TIME',self)
-        self.lbVal=QLabel('',self)
-
-        self.lbMin.setFont(tFont)
-        self.lbMax.setFont(tFont)
-        self.lbNme.setFont(tFont)
-        self.lbVal.setFont(tFont)
-
-        self.lbMin.move(0,40)
-        self.lbMax.move(140,40)
-        self.lbNme.move(10,1)
-        self.lbVal.move(10,20)
-
-        self.slide=QSlider(Qt.Horizontal,self)
-        self.slide.move(40,40)
         
-        #self.slide=QSlider(Qt.Horizontal,self)
-        #self.slide.move(40,40)
-        #self.slide.valueChanged[int].connect(self.slideChangeValue)
+        self.resize(350,200)
+        self.setFixedSize(350,200)
+
+
+        #Slide 1
+        self.lbNme1=QLabel('Service Window From:',self)
+        self.lbVal1=QLabel('',self)
+
+        self.lbNme1.setFont(tFont)
+        self.lbVal1.setFont(tFont)
+
+        self.lbNme1.move(10,10)
+        self.lbVal1.move(250,10)
+
+        self.slide1=QSlider(Qt.Horizontal,self)
+        self.slide1.move(150,10)
+
+        self.slide1.setRange(84,228)
+        self.slide1.valueChanged[int].connect(self.slideChangeValue1)
     
+        #Slide 2
+        self.lbNme2=QLabel('Service Window To:',self)
+        self.lbVal2=QLabel('',self)
+
+        self.lbNme2.setFont(tFont)
+        self.lbVal2.setFont(tFont)
+
+        self.lbNme2.move(10,60)
+        self.lbVal2.move(250,60)
+
+        self.slide2=QSlider(Qt.Horizontal,self)
+        self.slide2.move(150,60)
+       
+        self.slide2.setRange(84,228)
+        self.slide2.valueChanged[int].connect(self.slideChangeValue2)
         
+        #Slide 3
+        self.lbNme3=QLabel('Appointment Length:',self)
+        self.lbVal3=QLabel('',self)
+
+        self.lbNme3.setFont(tFont)
+        self.lbVal3.setFont(tFont)
+
+        self.lbNme3.move(10,110)
+        self.lbVal3.move(250,110)
+
+        self.slide3=QSlider(Qt.Horizontal,self)
+        self.slide3.move(150,110)
+       
+        self.slide3.setRange(3,24)
+        self.slide3.valueChanged[int].connect(self.slideChangeValue3)
         
-#    def setSlide(self,nme,tpe,dVal,minVal,maxVal):
-#        self.slNme=nme
-#        self.tpe=tpe
-#
-#        if tpe =='perc':
-#            dVal0=round(dVal/100.,2)
-#            minVal0=round(minVal/100.,2)
-#            maxVal0=round(maxVal/100.,2)
-#        
-#        if tpe=='count':
-#            dVal0=dVal
-#            minVal0=minVal
-#            maxVal0=maxVal
-#
-#
-#        self.lbMin.setText(str(minVal0))
-#        self.lbMin.adjustSize()
-#    
-#        self.lbMax.setText(str(maxVal0))
-#        self.lbMax.adjustSize()
-#        
-#        self.lbNme.setText(nme)
-#        self.lbNme.adjustSize()
-#        
-#        #self.lbVal.setText(str(dVal0))
-#        #self.lbVal.adjustSize()
-#        
-#        self.slide.setRange(minVal,maxVal)
-#        self.slide.setSingleStep(1)
-#        
-#        self.slideChangeValue(dVal)
-#
-#    def sizeHint(self):
-#        return QSize(180, 80)
-# 
-#    def slideChangeValue(self,value):
-#        #print(value)
-#        if self.tpe=='perc':
-#            value0=round(value/100.,2)
-#        if self.tpe=='count':
-#            value0=value
-#        
-#        slideVals[self.slNme]=value
-#        print(slideVals)
-#        self.lbVal.setText(str(value0))
-#        self.lbVal.adjustSize()
-#        self.slide.setValue(value)
+        self.lbVal3.setText(str(dispDuration(3)))
+        self.lbVal3.adjustSize()
+        
+
+    def slideChangeValue1(self,value):
+        self.lbVal1.setText(str(dispTime(value)))
+        self.lbVal1.adjustSize()
+        self.slide2.setRange(value+6,228)
+
+    def slideChangeValue2(self,value):
+        self.lbVal2.setText(str(dispTime(value)))
+        self.lbVal2.adjustSize()
+
+    def slideChangeValue3(self,value):
+        self.lbVal3.setText(str(dispDuration(value)))
+        self.lbVal3.adjustSize()
+
+def dispTime(t0):
+    t0=t0*5
+    ampm='am'
+    if t0>=720:
+        ampm='pm'
+    
+    t1=str(int(t0/60)%12)
+    t2=str(t0%60)
+
+    if t1=='0':
+        t1='12'
+    
+    if len(t2)==1:
+        t2='0'+t2
+    
+    t=t1+':'+t2+' '+ampm
+    return(t)
+
+
+def dispDuration(t0):
+    t0=t0*5
+    t1=str(int(t0/60))
+    t2=str(t0%60)
+
+    h='hrs'
+    m='mins'
+    
+    if t1=='1':
+        h='hr'
+    if t2=='1':
+        m='min'
+    t=t1+' '+h+' '+t2+' '+m  
+    return(t)   
 
 
 class careMans(QWidget):
@@ -151,15 +257,15 @@ class tbSched(QWidget):
         #self.table.setWindowTitle('CARE MANAGER #1')
         #self.table.resize(300, 300)
         self.table.setRowCount(5)
-        self.table.setColumnCount(5)
+        self.table.setColumnCount(6)
         
         
         # set label
-        self.table.setHorizontalHeaderLabels(['Member','Svc From','Svc To','Svc Actual','Address'])
+        self.table.setHorizontalHeaderLabels(['Member','Apt Start From','Apt Start To','Apt Start Actual','Apt Length','Address'])
         #table.setVerticalHeaderLabels(QString("V1;V2;V3;V4").split(";"))
  
 
-        self.table.setColumnWidth(5,250)
+        self.table.setColumnWidth(6,250)
         self.table.horizontalHeader().setStretchLastSection(True)
         
         
@@ -187,6 +293,7 @@ class tbSched(QWidget):
                             a.svc_tm_from,
                             a.svc_tm_to,
                             a.svc_tm_actual,
+                            a.svc_len,
                             b.full_addr
                     from    schedule a,
                             mbrs b
@@ -200,6 +307,7 @@ class tbSched(QWidget):
             self.table.setItem(pos,2, QTableWidgetItem(str(recs[pos][2])))
             self.table.setItem(pos,3, QTableWidgetItem(str(recs[pos][3])))
             self.table.setItem(pos,4, QTableWidgetItem(str(recs[pos][4])))
+            self.table.setItem(pos,5, QTableWidgetItem(str(recs[pos][5])))
         conn.close()
  
         #self.table.setItem(0,0, QTableWidgetItem('hello'))
@@ -232,7 +340,6 @@ if __name__ == "__main__":
     window = QWidget()
     window.setWindowTitle('Medica Care Management Scheduler')
    
-    
     layout=QGridLayout()
     
     cal1=QCalendarWidget()
@@ -246,7 +353,7 @@ if __name__ == "__main__":
     layout.addWidget(crm,2,1,1,1)
     layout.addWidget(tbs,3,1,1,2)
     
-    window.setGeometry(50, 50, 900, 500)
+    window.setGeometry(50, 50, 900, 600)
     window.setLayout(layout)
     window.show()
     sys.exit(app.exec_())
