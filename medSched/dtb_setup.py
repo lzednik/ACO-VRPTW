@@ -11,15 +11,15 @@ dtb='data_files/medSched.sqlite'
 conn=sqlite3.connect(dtb)
 c=conn.cursor()
 
-#c.execute('DROP TABLE outZipDT')
+#c.execute('DROP TABLE inZipDT')
 #c.execute('DROP TABLE schedule')
 
 
-c.execute('''
-    CREATE TABLE cmAvlblt(  svc_dt REAL,
-                            cm_ct INTEGER
-                      )
-''')
+#c.execute('''
+#    CREATE TABLE cmAvlblt(  svc_dt REAL,
+#                            cm_ct INTEGER
+#                      )
+#''')
 
 #c.execute('''
 #    CREATE TABLE schedule(  cm_id INTEGER,
@@ -53,10 +53,20 @@ c.execute('''
 #''')
 
 #c.execute('''
-#    CREATE TABLE inZipDT(   comb_key INTEGER,
+#    CREATE TABLE inZipDT(   zip TEXT,
+#                            dist INT,
+#                            tme INT
+#                      )
+#''')
+
+
+#c.execute('''
+#    CREATE TABLE inZipDT1(  comb_key INTEGER,
 #                            zip TEXT,
-#                            dist TEXT,
-#                            time TEXT
+#                            d0 TEXT,
+#                            t0 TEXT,
+#                            dist INT,
+#                            tme INT
 #                      )
 #''')
 
@@ -68,6 +78,29 @@ c.execute('''
 #                            time TEXT
 #                      )
 #''')
+
+
+
+#c.execute('''
+#    CREATE TABLE outZipDT(  out_key INTEGER,
+#                            zip1 TEXT,
+#                            zip2 TEXT,
+#                            d0 TEXT,
+#                            t0 TEXT,
+#                            dist INT,
+#                            tme INT
+#                      )
+#''')
+
+
+c.execute('''
+    CREATE TABLE distTme(   zip1 TEXT,
+                            zip2 TEXT,
+                            dist INT,
+                            tme INT
+                      )
+''')
+
 
 
 conn.close()

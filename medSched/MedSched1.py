@@ -5,10 +5,15 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import sqlite3
 
+sys.path.insert(0, 'C:/Users/Lada/Documents/ACO/ACO-VRPTW')
+from aco_funs import *
+from aco_vrptw import *
+
 
 dtb='data_files/medSched.sqlite'
+newMbr={}
+newMbr['service_time']=15
 
- 
 class newAppt(QWidget):
     def __init__(self,parent=None):
         QWidget.__init__(self, parent)
@@ -17,8 +22,10 @@ class newAppt(QWidget):
         lbFont=QFont()
         lbFont.setPointSize(10)
         lbFont.setBold(True)
-
-
+        
+        self.cmAvl=False
+        self.resDataM=[]
+        self.resSolution={}
 
         self.lbTitle=QLabel('                           Create New Appointment                          ')
         self.lbTitle.setFont(lbFont)
@@ -28,12 +35,13 @@ class newAppt(QWidget):
         self.checkAveB=QPushButton('Check Availability')
         self.checkAveB.clicked.connect(self.checkAvb)
         
-        self.appStatL=QLabel('Available')
+        self.appStatL=QLabel('')
         
         self.confB=QPushButton('Confirm')
+        self.confB.clicked.connect(self.confirmAvb)
         
         layout.addWidget(self.lbTitle,1,1,1,2)
-        layout.addWidget(self.mbr1,2,1,1,1)
+        layout.addWidget(self.mbr1,2,1,1,2)
         layout.addWidget(self.slds,3,1,1,2)
         layout.addWidget(self.checkAveB,4,1,1,2)
         layout.addWidget(self.appStatL,5,1,1,1)
@@ -51,36 +59,148 @@ class newAppt(QWidget):
         svc_dt=cal1.selectedDate().toPyDate()
         c.execute('''select mbr_id, 
                             svc_tm_from,
-                            svc_tm_to
+                            svc_tm_to,
+                            svc_len
                     from    schedule
                     where   svc_dt =?''',(svc_dt,))
         
         recs=c.fetchall()
         dataM=[]
+        custList=[0]
         rec0={}
+        
+        #depo data
+        rec0['cust_no']=0
+        rec0['ready_time']=0
+        rec0['due_time']=1500
+        rec0['service_time']=0
+        dataM.append(rec0)
+
+        #create dataM records for already created appointments
         for rec in recs:
+            rec0={}
+            print('printing rec',rec)
             rec0['cust_no']=rec[0]
             rec0['ready_time']=rec[1]
             rec0['due_time']=rec[2]
-            rec0['service_time']=0
+            rec0['service_time']=rec[3]
+            dataM.append(rec0)
+            custList.append(rec[0])
 
+
+        try:
+            #dataM record for the new appointment
+            rec0={}
+            rec0['cust_no']=newMbr['cust_no']
+            rec0['ready_time']=newMbr['ready_time']
+            rec0['due_time']=newMbr['due_time']
+            rec0['service_time']=newMbr['service_time']
+            dataM.append(rec0)
+            custList.append(newMbr['cust_no'])
+
+            print('cust_no',newMbr['cust_no']) 
+            print('ready_time',newMbr['ready_time']) 
+            print('due_time',newMbr['due_time']) 
+            print('service_time',newMbr['service_time']) 
+        except:
+            print('SELECTION INCOMPLETE')
         
 
+        #create distM
+        distM=[]
+        for cust1 in custList:
+            d0M=[]
+            for cust2 in custList:
+                c.execute(  '''
+                    select  distinct c.tme
+                    from    mbrs a,
+                            mbrs b,
+                            distTme c
+                    where   a.mbr_id = ? and
+                            b.mbr_id = ? and
+                            (
+                            (a.zip_cd = c.zip1 and
+                            b.zip_cd = c.zip2)
+                            or
+                            (a.zip_cd = c.zip2 and
+                            b.zip_cd = c.zip1)
+                            )
 
+                            ''',(cust1,cust2,))
+                
+                recs=c.fetchall()
+                print('************')
+                print(cust1,cust2)
+                print('recs',recs)
+                print('************')
+                d0M.append(recs[0][0])
+            distM.append(d0M)
 
+        
+        #Solution
+        initSol=initSolution(0,dataM,distM)
+        depo=0
+        locCount=len(dataM)
+        alpha=0.2
+        BRCP=0.7
+        iterCount=30
+        colSize=20
+                
+        solution=aco_run(dataM,distM,depo,locCount,initSol,alpha,BRCP,iterCount,colSize)
+        print('aco sol vehcount',solution['vehicleCount'])
+                
+        
+        
+        #getting cm availability
+        c.execute('''   select cm_ct 
+                        from cmAvlblt
+                        where   svc_dt =?''',(svc_dt,))
+        
+        cm_ct=c.fetchall()[0][0]
+        print('cm avail',cm_ct)
+        
+        if solution['vehicleCount'] <= cm_ct:
+            print('We have enough CMs')
+            self.cmAvl=True
+            self.appStatL.setText('AVAILABLE')
+        else:
+            self.appStatL.setText('NOT AVAILABLE')
+            self.cmAvl=False
 
+        for veh in solution['vehicles']:
+            print(veh['vehNum'],veh['tour'])
+        
 
-
-
+        self.resDataM=dataM
+        self.resSolution=solution
 
         conn.close()
 
-        #solution=aco_run(dataM,distM,depo,locCount,initSol,alpha,BRCP,iterCount,colSize)
+    def confirmAvb(self):
+        print('confirm availability')
+        svc_dt=cal1.selectedDate().toPyDate()
+        
+        conn=sqlite3.connect(dtb)
+        c=conn.cursor()
 
-
-
-
-
+        c.execute('''   Delete from schedule
+                        where   svc_dt =?''',(svc_dt,))
+        
+        
+        if self.cmAvl==True:
+            for veh in self.resSolution['vehicles']:
+                for mbr in veh['tour']:
+                    if mbr != 0:
+                        cm_id0=veh['vehNum']
+                        mbr_id0=self.resDataM[mbr]['cust_no']
+                        svc_from0=self.resDataM[mbr]['ready_time']
+                        svc_to0=self.resDataM[mbr]['due_time']
+                        svc_len0=self.resDataM[mbr]['service_time']
+                        c.execute('''INSERT INTO schedule(cm_id,mbr_id,svc_dt,svc_tm_from,svc_tm_to,svc_len)
+                                     VALUES(?,?,?,?,?,?)''',(cm_id0,mbr_id0,svc_dt,svc_from0,svc_to0,svc_len0)) 
+        conn.commit() 
+        conn.close() 
+        self.appStatL.setText('CONFIRMED')
 class mbrSelection(QWidget):
     def __init__(self,parent = None):
         QWidget.__init__(self, parent)
@@ -91,21 +211,24 @@ class mbrSelection(QWidget):
         tFont.setBold(True)
 
         self.lb1=QLabel('Member')
-        
         self.lb1.setFont(tFont)
         
+        self.tb1=QLineEdit()
 
         layout.addWidget(self.lb1,1,1)
+        layout.addWidget(self.tb1,1,2)
 
         self.setLayout(layout)
         
-
-
-
+        self.tb1.textChanged.connect(self.mbrChange) 
+    
+    def mbrChange(self,value):
+        newMbr['cust_no']=value
+        
 class sliders(QWidget):
 
     clicked = pyqtSignal()
-    
+
     def __init__(self,parent = None):
     
         QWidget.__init__(self, parent)
@@ -175,14 +298,17 @@ class sliders(QWidget):
         self.lbVal1.setText(str(dispTime(value)))
         self.lbVal1.adjustSize()
         self.slide2.setRange(value+6,228)
+        newMbr['ready_time']=value*5
 
     def slideChangeValue2(self,value):
         self.lbVal2.setText(str(dispTime(value)))
         self.lbVal2.adjustSize()
+        newMbr['due_time']=value*5
 
     def slideChangeValue3(self,value):
         self.lbVal3.setText(str(dispDuration(value)))
         self.lbVal3.adjustSize()
+        newMbr['service_time']=value*5
 
 def dispTime(t0):
     t0=t0*5
@@ -261,11 +387,17 @@ class tbSched(QWidget):
         
         
         # set label
-        self.table.setHorizontalHeaderLabels(['Member','Apt Start From','Apt Start To','Apt Start Actual','Apt Length','Address'])
+        self.table.setHorizontalHeaderLabels(['Mbr ID','Mbr Name','Mbr Address','Apt Win From','Apt Win To','Apt Length'])
         #table.setVerticalHeaderLabels(QString("V1;V2;V3;V4").split(";"))
  
 
-        self.table.setColumnWidth(6,250)
+        self.table.setColumnWidth(0,80)
+        self.table.setColumnWidth(1,180)
+        self.table.setColumnWidth(2,280)
+        self.table.setColumnWidth(3,100)
+        self.table.setColumnWidth(4,100)
+        self.table.setColumnWidth(5,100)
+
         self.table.horizontalHeader().setStretchLastSection(True)
         
         
@@ -290,11 +422,12 @@ class tbSched(QWidget):
         self.CMlb1.adjustSize()
 
         c.execute('''select a.mbr_id, 
+                            b.full_name,
+                            b.full_addr,
                             a.svc_tm_from,
                             a.svc_tm_to,
-                            a.svc_tm_actual,
-                            a.svc_len,
-                            b.full_addr
+                            a.svc_len
+                            
                     from    schedule a,
                             mbrs b
                     where   a.mbr_id = b.mbr_id and
@@ -305,9 +438,9 @@ class tbSched(QWidget):
             self.table.setItem(pos,0, QTableWidgetItem(str(recs[pos][0])))
             self.table.setItem(pos,1, QTableWidgetItem(str(recs[pos][1])))
             self.table.setItem(pos,2, QTableWidgetItem(str(recs[pos][2])))
-            self.table.setItem(pos,3, QTableWidgetItem(str(recs[pos][3])))
-            self.table.setItem(pos,4, QTableWidgetItem(str(recs[pos][4])))
-            self.table.setItem(pos,5, QTableWidgetItem(str(recs[pos][5])))
+            self.table.setItem(pos,3, QTableWidgetItem(str(dispTime(recs[pos][3]))))
+            self.table.setItem(pos,4, QTableWidgetItem(str(dispTime(recs[pos][4]))))
+            self.table.setItem(pos,5, QTableWidgetItem(str(dispDuration(recs[pos][5]))))
         conn.close()
  
         #self.table.setItem(0,0, QTableWidgetItem('hello'))

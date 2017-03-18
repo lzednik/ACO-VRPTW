@@ -2,11 +2,26 @@ import time
 from aco_funs import *
 from aco_vrptw import *
 
+
+import sqlite3
+import numpy as np
+
+import matplotlib
+matplotlib.use("Qt5Agg")
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+from matplotlib.figure import Figure
+
+import math
+import random
+
 import sys
+import os
 from PyQt5.QtCore import pyqtSignal, QSize, Qt
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import (QWidget, QSlider, QApplication, 
     QHBoxLayout, QVBoxLayout,QLabel,QGridLayout,QFileDialog,QPushButton,QCheckBox,QLineEdit)
+
 
 class slide(QWidget):
 
@@ -105,7 +120,11 @@ class filedialog(QWidget):
    def getfile(self):
       inpFile = QFileDialog.getOpenFileName(self, 'Open file','C:\\Users\Lada\Documents\ACO\ACO-VRPTW\Input',"Txt Files (*.txt)")
       self.inpFilePath=inpFile[0]
-      self.inpFileLb.setText(self.inpFilePath)
+
+      base=os.path.basename(inpFile[0])
+      self.inputFileName=os.path.splitext(base)[0]
+      
+      self.inpFileLb.setText('FileName: '+self.inputFileName)
       self.inpFileLb.adjustSize()
       
       #self.le.setPixmap(QPixmap(fname))
@@ -199,6 +218,112 @@ class resDisp(QWidget):
         
         self.brcpDv.setText(str(BRCP))
         self.brcpDv.adjustSize()
+
+
+class chartDisp(QWidget):
+    def __init__(self,parent=None):
+        QWidget.__init__(self, parent)
+        
+        #layout = QVBoxLayout()
+        layout = QGridLayout()
+        
+        self.figure = Figure()
+        self.canvas = FigureCanvasQTAgg(self.figure)
+        self.figure.subplots_adjust(left=0.2,right=0.95,bottom=0.2,top=0.95)
+        #self.figure.subplots_adjust(left=0.4,right=0.7,bottom=0.4,top=0.7)
+        
+        self.button1 = QPushButton('Plot1')
+        self.button1.clicked.connect(self.plot1)
+        
+        self.button2=QPushButton('Plot2')
+        self.button2.clicked.connect(self.plot2)
+        
+        layout.addWidget(self.button1,1,1,1,1)
+        layout.addWidget(self.button2,2,1,1,1)
+        layout.addWidget(self.canvas,3,1,1,1)
+        self.setFixedSize(300, 300)
+        
+        self.setLayout(layout)
+    
+    def plot1(self):
+        #vehcount data
+        c.execute('select vehCount,count(distinct idVar) from solutions group by vehCount')
+        vehCtList0=c.fetchall()
+        vehCounts=[]
+        vehData=[]
+        for vcd in vehCtList0:
+            vehCounts.append(vcd[0])
+            vehData.append(vcd[1])
+        
+        bar_width=0.6 
+
+        # create an axis
+        ax = self.figure.add_subplot(111)
+
+        # discards the old graph
+        ax.hold(False)
+        # plot data
+        ax.bar(vehCounts,vehData,width=bar_width,color='b')
+        
+        #labels
+        ax.set_xlabel('Vehicle Counts')
+        ax.set_ylabel('Run Counts')
+        ax.set_xticks([w+0.5*bar_width for w in vehCounts])
+        ax.set_xticklabels(vehCounts)
+        # refresh canvas
+        self.canvas.draw()
+          
+    def plot2(self):
+        #watch var
+        rsv=rsv1.resVar
+        if rsv=='Colony Size':
+            rsv='colonySize'
+        
+        #rsvs
+        c.execute('select distinct '+ rsv +' from solutions')
+        rsvDt=[x[0] for x in c.fetchall()]
+       
+        #vehcounts
+        c.execute('select distinct vehCount from solutions')
+        vcs=[x[0] for x in c.fetchall()]
+        
+        bar_width=0.8/len(rsvDt) 
+        color_list=[ 'b','g','r','c','m','y','k','w']
+        
+        ax = self.figure.add_subplot(111)
+        ax.clear()
+        ax.hold(True)
+        rsvarCt=1
+        for rsvar in rsvDt:
+            #get a record for eavh vecount
+            vehCounts=[]
+            vehData=[]
+            for vc in vcs:
+                c.execute('select count(distinct idVar) from solutions where '+rsv+' = '+str(rsvar)+ ' and vehCount = '+str(vc))
+                vehCounts.append(vc+rsvarCt*bar_width)
+                vehData.append(c.fetchall()[0][0])
+
+            print(rsvar,vehCounts,vehData) 
+            ax.bar( vehCounts,
+                    vehData,
+                    width=bar_width,
+                    color=color_list[rsvarCt-1],
+                    label=rsv+' '+str(rsvar))
+            
+            # Add a legend
+            handles, labels = ax.get_legend_handles_labels()
+            ax.legend(handles[::-1], labels[::-1], loc='upper right', fontsize = 'xx-small')
+            rsvarCt+=1
+        
+        #labels
+        ax.set_xlabel('Vehicle Counts')
+        ax.set_ylabel('Run Counts')
+        ax.set_xticks([vc+0.5*len(rsvDt)*bar_width for vc in vcs])
+        ax.set_xticklabels(vcs)
+
+        # refresh canvas
+        self.canvas.draw()
+
 class runDisp(QWidget):
     def __init__(self,parent=None):
         QWidget.__init__(self, parent)
@@ -222,7 +347,29 @@ class runDisp(QWidget):
     def runRefresh(self,run):
         self.runDv.setText(str(run+1))
         self.runDv.adjustSize()
+
+
+class processInd(QWidget):
+    def __init__(self,parent=None):
+        QWidget.__init__(self, parent)
+		
+        processFont=QFont()
+        processFont.setBold(True)
+        processFont.setPointSize(20)        
+
+        layout = QGridLayout()
         
+        self.processLabel = QLabel('')	
+        self.processLabel.setFont(processFont)
+        
+        layout.addWidget(self.processLabel,1,1)
+    
+        self.setLayout(layout)
+
+    def processStatus(self,status):
+        self.processLabel.setText(str(status))
+        QApplication.processEvents()
+
 class researchVar(QWidget):
     def __init__(self,parent=None):
         QWidget.__init__(self, parent)
@@ -290,11 +437,13 @@ class researchVar(QWidget):
 
 def run_bt_clicked(self):
     print('running')
+    pStatus.processStatus('Running')
+
     #QApplication.processEvents()
     #aco_dtb
-    dtb='Output/aco_dtb.sqlite'
-    conn=sqlite3.connect(dtb)
-    c=conn.cursor()
+    #dtb='Output/aco_dtb.sqlite'
+    #conn=sqlite3.connect(dtb)
+    #c=conn.cursor()
     c.execute('DELETE FROM Solutions')
     c.execute('DELETE FROM Vehicles')
 
@@ -360,7 +509,7 @@ def run_bt_clicked(self):
             if solution['vehicleCount']< bestSolution['vehicleCount']:
                 bestSolution=solution
                 bsRefresh=True
-            if solution['vehicleCount']==bestSolution['vehicleCount'] and solution['distance']==bestSolution['distance']:
+            if solution['vehicleCount']==bestSolution['vehicleCount'] and solution['distance']<bestSolution['distance']:
                 bestSolution=solution        
                 bsRefresh=True
 
@@ -369,11 +518,18 @@ def run_bt_clicked(self):
                 d2.dispRefresh(bestSolution['vehicleCount'],bestSolution['distance'],bestSolution['iteration'],iterCount,bestSolution['colony'],colSize,alpha,BRCP)
             
             rd1.runRefresh(run)
+            if rsv == 'None':
+                chart1.plot1()
+            else:
+                chart1.plot2()
             
             rsvV+=rsvStep
             rsvV=round(rsvV,2)
+            
+            
+
             QApplication.processEvents()
-    conn.close()        
+    pStatus.processStatus('Run Complete')
 
 if __name__ == "__main__":
 
@@ -381,10 +537,11 @@ if __name__ == "__main__":
     window = QWidget()
     window.setWindowTitle('ACO VRPTW')
 
-    slideVals={}
+    dtb='Output/aco_dtb.sqlite'
+    conn=sqlite3.connect(dtb)
+    c=conn.cursor()
     
-
-    #label = QLabel('hi hi')
+    slideVals={}
     
     fd = filedialog()
     
@@ -410,26 +567,33 @@ if __name__ == "__main__":
     d1=resDisp('Current Solution')
     d2=resDisp('Best Solution')
 
+    pStatus=processInd()
+
     rd1=runDisp()
     rsv1=researchVar()
+    chart1=chartDisp()
 
-    layout.addWidget(s1,1,1)
-    layout.addWidget(s2,1,2)
-    layout.addWidget(s3,2,1)
-    layout.addWidget(s4,2,2)
+    layout.addWidget(s3,1,1)
+    layout.addWidget(s4,1,2)
+    layout.addWidget(s1,2,1)
+    layout.addWidget(s2,2,2)
     layout.addWidget(s5,2,3)
+    layout.addWidget(pStatus,1,3)
     
     layout.addWidget(rsv1,3,1,1,3)
 
-    layout.addWidget(fd,4,1,1,2)
+    layout.addWidget(fd,4,1,1,1)
     layout.addWidget(run_bt,5,1,1,1)
     
     layout.addWidget(rd1,5,2,1,1)
 
     layout.addWidget(d1,6,1,1,1)
     layout.addWidget(d2,6,2,1,1)
+    layout.addWidget(chart1,4,3,3,1)
+
 
     window.setLayout(layout)
     
     window.show()
     sys.exit(app.exec_())
+    conn.close()        

@@ -41,7 +41,7 @@ def createDistanceMatrix(dataM):
         locFromDist=[]
         for locTo in dataM:
             coordTo=(locTo['xcoord'],locTo['ycoord'])
-            locFromDist.append(round(distance.euclidean(coordFrom,coordTo),2))
+            locFromDist.append(int(distance.euclidean(coordFrom,coordTo)))
 
         distM.append(locFromDist)
     return(distM)
@@ -57,7 +57,8 @@ def initSolution(depo,dataM,distM):
                'tour':[depo],
                'currPos':depo,
                'time':0}
-    tour=[]
+    tour={}
+    tour_fl=[]
     while len(visited)<len(dataM)-1:
         feasLocs=[]
         for loc in range(1,len(dataM)):
@@ -70,7 +71,10 @@ def initSolution(depo,dataM,distM):
             vehicle['time']=max(vehicle['time']+distM[vehicle['currPos']][nextLoc],dataM[nextLoc]['ready_time'])+dataM[nextLoc]['service_time']
             totalDist+=distM[vehicle['currPos']][nextLoc]
             
-            tour.append((vehicle['currPos'],nextLoc))
+            if vehicle['currPos']==depo:
+                tour_fl.append(nextLoc)
+            else:
+                tour[vehicle['currPos']]=nextLoc
             vehicle['currPos']=nextLoc
             visited.append(nextLoc)
         else:
@@ -96,10 +100,12 @@ def initSolution(depo,dataM,distM):
     solution['vehicles']=vehicles
     solution['visited']=visited
     solution['tour']=tour
+    solution['tour_fl']=tour_fl
     solution['visitedCount']=len(visited)
     solution['distance']=totalDist
     solution['vehicleCount']=len(vehicles)
 
     return solution
  
+
 
