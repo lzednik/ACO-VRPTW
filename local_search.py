@@ -1,5 +1,5 @@
 from aco_funs import *
-from local_search_funs import *
+from aco_ls_funs import *
 import copy
 
 with open('Output/vehicles.txt') as f:
@@ -49,23 +49,38 @@ while ls_change==True:
     after_insert=insert_locs(vehicles,visited,dataM,distM)
     visited=after_insert['visited']
     vehicles=after_insert['vehicles']
-    print('visted count insert',len(visited))
-    print('distance insert',calc_dist(vehicles,distM))
-    print('**********************************')
-    
+    #print('visted count insert',len(visited))
+    #print('distance insert',calc_dist(vehicles,distM))
+    #print('**********************************')
+   
+
     #swap two locs
     vehicles=swap_locs(vehicles,visited,dataM,distM)
-    print('visted count swap',len(visited))
-    print('distance swap',calc_dist(vehicles,distM))
-    print('**********************************')
+    #print('visted count swap',len(visited))
+    #print('distance swap',calc_dist(vehicles,distM))
+    #print('**********************************')
 
+    
+    loc_ct=0
+    for veh in vehicles:
+        for loc in veh['tour']:
+            if loc!=0:
+                loc_ct+=1
+    print('loc_ct',loc_ct)
+
+    print('distance before move',calc_dist(vehicles,distM))
     
     #move loc
     vehicles=move_loc(vehicles,visited,dataM,distM)
-    print('visted count move',len(visited))
-    print('distance move',calc_dist(vehicles,distM))
-    print('**********************************')
+    print('distance after move',calc_dist(vehicles,distM))
     
+    loc_ct=0
+    for veh in vehicles:
+        for loc in veh['tour']:
+            if loc!=0:
+                loc_ct+=1
+    print('loc_ct',loc_ct)
+    time.sleep(10)
     ls_dist2=calc_dist(vehicles,distM)
     
     ls_change=False

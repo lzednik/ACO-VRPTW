@@ -12,7 +12,7 @@ from aco_vrptw import *
 
 dtb='data_files/medSched.sqlite'
 newMbr={}
-newMbr['service_time']=15
+newMbr['service_time']=3
 
 class newAppt(QWidget):
     def __init__(self,parent=None):
@@ -24,6 +24,7 @@ class newAppt(QWidget):
         lbFont.setBold(True)
         
         self.cmAvl=False
+        self.FirstAppt=False
         self.resDataM=[]
         self.resSolution={}
 
@@ -65,119 +66,124 @@ class newAppt(QWidget):
                     where   svc_dt =?''',(svc_dt,))
         
         recs=c.fetchall()
-        dataM=[]
-        custList=[0]
-        rec0={}
         
-        #depo data
-        rec0['cust_no']=0
-        rec0['ready_time']=0
-        rec0['due_time']=1500
-        rec0['service_time']=0
-        dataM.append(rec0)
-
-        #create dataM records for already created appointments
-        for rec in recs:
-            rec0={}
-            print('printing rec',rec)
-            rec0['cust_no']=rec[0]
-            rec0['ready_time']=rec[1]
-            rec0['due_time']=rec[2]
-            rec0['service_time']=rec[3]
-            dataM.append(rec0)
-            custList.append(rec[0])
-
-
-        try:
-            #dataM record for the new appointment
-            rec0={}
-            rec0['cust_no']=newMbr['cust_no']
-            rec0['ready_time']=newMbr['ready_time']
-            rec0['due_time']=newMbr['due_time']
-            rec0['service_time']=newMbr['service_time']
-            dataM.append(rec0)
-            custList.append(newMbr['cust_no'])
-
-            print('cust_no',newMbr['cust_no']) 
-            print('ready_time',newMbr['ready_time']) 
-            print('due_time',newMbr['due_time']) 
-            print('service_time',newMbr['service_time']) 
-        except:
-            print('SELECTION INCOMPLETE')
-        
-
-        #create distM
-        distM=[]
-        for cust1 in custList:
-            d0M=[]
-            for cust2 in custList:
-                c.execute(  '''
-                    select  distinct c.tme
-                    from    mbrs a,
-                            mbrs b,
-                            distTme c
-                    where   a.mbr_id = ? and
-                            b.mbr_id = ? and
-                            (
-                            (a.zip_cd = c.zip1 and
-                            b.zip_cd = c.zip2)
-                            or
-                            (a.zip_cd = c.zip2 and
-                            b.zip_cd = c.zip1)
-                            )
-
-                            ''',(cust1,cust2,))
-                
-                recs=c.fetchall()
-                print('************')
-                print(cust1,cust2)
-                print('recs',recs)
-                print('************')
-                d0M.append(recs[0][0])
-            distM.append(d0M)
-
-        
-        #Solution
-        initSol=initSolution(0,dataM,distM)
-        depo=0
-        locCount=len(dataM)
-        alpha=0.2
-        BRCP=0.7
-        iterCount=30
-        colSize=20
-                
-        solution=aco_run(dataM,distM,depo,locCount,initSol,alpha,BRCP,iterCount,colSize)
-        print('aco sol vehcount',solution['vehicleCount'])
-                
-        
-        
-        #getting cm availability
-        c.execute('''   select cm_ct 
-                        from cmAvlblt
-                        where   svc_dt =?''',(svc_dt,))
-        
-        cm_ct=c.fetchall()[0][0]
-        print('cm avail',cm_ct)
-        
-        if solution['vehicleCount'] <= cm_ct:
-            print('We have enough CMs')
+        if len(recs)==0:
+            #first appointment
+            print('first appointment')
             self.cmAvl=True
+            self.FirstAppt=True
             self.appStatL.setText('AVAILABLE')
         else:
-            self.appStatL.setText('NOT AVAILABLE')
-            self.cmAvl=False
+            self.FirstAppt=False
+            dataM=[]
+            custList=[0]
+            rec0={}
+            
+            #depo data
+            rec0['cust_no']=0
+            rec0['ready_time']=0
+            rec0['due_time']=1500
+            rec0['service_time']=0
+            dataM.append(rec0)
 
-        for veh in solution['vehicles']:
-            print(veh['vehNum'],veh['tour'])
-        
+            #create dataM records for already created appointments
+            for rec in recs:
+                rec0={}
+                print('printing rec',rec)
+                rec0['cust_no']=rec[0]
+                rec0['ready_time']=rec[1]
+                rec0['due_time']=rec[2]
+                rec0['service_time']=rec[3]
+                dataM.append(rec0)
+                custList.append(rec[0])
 
-        self.resDataM=dataM
-        self.resSolution=solution
+
+            try:
+                #dataM record for the new appointment
+                rec0={}
+                rec0['cust_no']=newMbr['cust_no']
+                rec0['ready_time']=newMbr['ready_time']
+                rec0['due_time']=newMbr['due_time']
+                rec0['service_time']=newMbr['service_time']
+                dataM.append(rec0)
+                custList.append(newMbr['cust_no'])
+
+                print('cust_no',newMbr['cust_no']) 
+                print('ready_time',newMbr['ready_time']) 
+                print('due_time',newMbr['due_time']) 
+                print('service_time',newMbr['service_time']) 
+            except:
+                print('SELECTION INCOMPLETE')
+            
+
+            #create distM
+            distM=[]
+            for cust1 in custList:
+                d0M=[]
+                for cust2 in custList:
+                    c.execute(  '''
+                        select  distinct c.tme
+                        from    mbrs a,
+                                mbrs b,
+                                distTme c
+                        where   a.mbr_id = ? and
+                                b.mbr_id = ? and
+                                (
+                                (a.zip_cd = c.zip1 and
+                                b.zip_cd = c.zip2)
+                                or
+                                (a.zip_cd = c.zip2 and
+                                b.zip_cd = c.zip1)
+                                )
+
+                                ''',(cust1,cust2,))
+                    
+                    recs=c.fetchall()
+                    d0M.append(round(float(recs[0][0])/5,2))
+                distM.append(d0M)
+
+            
+            #Solution
+            initSol=initSolution(0,dataM,distM)
+            depo=0
+            locCount=len(dataM)
+            alpha=0.2
+            BRCP=0.7
+            iterCount=30
+            colSize=20
+                    
+            solution=aco_run(dataM,distM,depo,locCount,initSol,alpha,BRCP,iterCount,colSize)
+            print('aco sol vehcount',solution['vehicleCount'])
+                    
+            
+            
+            #getting cm availability
+            c.execute('''   select cm_ct 
+                            from cmAvlblt
+                            where   svc_dt =?''',(svc_dt,))
+            
+            cm_ct=c.fetchall()[0][0]
+            print('cm avail',cm_ct)
+            
+            if solution['vehicleCount'] <= cm_ct:
+                print('We have enough CMs')
+                self.cmAvl=True
+                self.appStatL.setText('AVAILABLE')
+            else:
+                self.appStatL.setText('NOT AVAILABLE')
+                self.cmAvl=False
+
+            for veh in solution['vehicles']:
+                print(veh['vehNum'],veh['tour'])
+            
+
+            self.resDataM=dataM
+            self.resSolution=solution
 
         conn.close()
 
     def confirmAvb(self):
-        print('confirm availability')
+        print('confirming availability')
         svc_dt=cal1.selectedDate().toPyDate()
         
         conn=sqlite3.connect(dtb)
@@ -188,16 +194,28 @@ class newAppt(QWidget):
         
         
         if self.cmAvl==True:
-            for veh in self.resSolution['vehicles']:
-                for mbr in veh['tour']:
-                    if mbr != 0:
-                        cm_id0=veh['vehNum']
-                        mbr_id0=self.resDataM[mbr]['cust_no']
-                        svc_from0=self.resDataM[mbr]['ready_time']
-                        svc_to0=self.resDataM[mbr]['due_time']
-                        svc_len0=self.resDataM[mbr]['service_time']
-                        c.execute('''INSERT INTO schedule(cm_id,mbr_id,svc_dt,svc_tm_from,svc_tm_to,svc_len)
-                                     VALUES(?,?,?,?,?,?)''',(cm_id0,mbr_id0,svc_dt,svc_from0,svc_to0,svc_len0)) 
+            if self.FirstAppt==True:
+                cm_id0=1
+                mbr_id0=newMbr['cust_no']
+                svc_from0=newMbr['ready_time']
+                svc_to0=newMbr['due_time']
+                svc_len0=newMbr['service_time']
+                c.execute('''INSERT INTO schedule(cm_id,mbr_id,svc_dt,svc_tm_from,svc_tm_to,svc_len)
+                             VALUES(?,?,?,?,?,?)''',(cm_id0,mbr_id0,svc_dt,svc_from0,svc_to0,svc_len0)) 
+            else:
+                for veh in self.resSolution['vehicles']:
+                    order_id=1
+                    for mbr in veh['tour']:
+                        if mbr != 0:
+                            cm_id0=veh['vehNum']
+                            mbr_id0=self.resDataM[mbr]['cust_no']
+                            svc_from0=self.resDataM[mbr]['ready_time']
+                            svc_to0=self.resDataM[mbr]['due_time']
+                            svc_len0=self.resDataM[mbr]['service_time']
+                            c.execute('''INSERT INTO schedule(cm_id,order_id,mbr_id,svc_dt,svc_tm_from,svc_tm_to,svc_len)
+                                         VALUES(?,?,?,?,?,?,?)''',(cm_id0,order_id,mbr_id0,svc_dt,svc_from0,svc_to0,svc_len0)) 
+                            order_id+=1
+
         conn.commit() 
         conn.close() 
         self.appStatL.setText('CONFIRMED')
@@ -298,20 +316,20 @@ class sliders(QWidget):
         self.lbVal1.setText(str(dispTime(value)))
         self.lbVal1.adjustSize()
         self.slide2.setRange(value+6,228)
-        newMbr['ready_time']=value*5
+        newMbr['ready_time']=value
 
     def slideChangeValue2(self,value):
         self.lbVal2.setText(str(dispTime(value)))
         self.lbVal2.adjustSize()
-        newMbr['due_time']=value*5
+        newMbr['due_time']=value
 
     def slideChangeValue3(self,value):
         self.lbVal3.setText(str(dispDuration(value)))
         self.lbVal3.adjustSize()
-        newMbr['service_time']=value*5
+        newMbr['service_time']=value
 
-def dispTime(t0):
-    t0=t0*5
+def dispTime(tm0):
+    t0=tm0*5
     ampm='am'
     if t0>=720:
         ampm='pm'
@@ -329,8 +347,8 @@ def dispTime(t0):
     return(t)
 
 
-def dispDuration(t0):
-    t0=t0*5
+def dispDuration(tm0):
+    t0=tm0*5
     t1=str(int(t0/60))
     t2=str(t0%60)
 
@@ -382,21 +400,22 @@ class tbSched(QWidget):
         # initiate table
         #self.table.setWindowTitle('CARE MANAGER #1')
         #self.table.resize(300, 300)
-        self.table.setRowCount(5)
-        self.table.setColumnCount(6)
+        self.table.setRowCount(100)
+        self.table.setColumnCount(7)
         
         
         # set label
-        self.table.setHorizontalHeaderLabels(['Mbr ID','Mbr Name','Mbr Address','Apt Win From','Apt Win To','Apt Length'])
+        self.table.setHorizontalHeaderLabels(['Order Ind','Mbr ID','Mbr Name','Mbr Address','Apt Win From','Apt Win To','Apt Length'])
         #table.setVerticalHeaderLabels(QString("V1;V2;V3;V4").split(";"))
  
 
         self.table.setColumnWidth(0,80)
-        self.table.setColumnWidth(1,180)
-        self.table.setColumnWidth(2,280)
-        self.table.setColumnWidth(3,100)
+        self.table.setColumnWidth(1,80)
+        self.table.setColumnWidth(2,150)
+        self.table.setColumnWidth(3,200)
         self.table.setColumnWidth(4,100)
         self.table.setColumnWidth(5,100)
+        self.table.setColumnWidth(6,100)
 
         self.table.horizontalHeader().setStretchLastSection(True)
         
@@ -421,7 +440,8 @@ class tbSched(QWidget):
         self.CMlb1.setText('Care Manager #'+str(cm_id))
         self.CMlb1.adjustSize()
 
-        c.execute('''select a.mbr_id, 
+        c.execute('''select a.order_id,
+                            a.mbr_id, 
                             b.full_name,
                             b.full_addr,
                             a.svc_tm_from,
@@ -438,10 +458,28 @@ class tbSched(QWidget):
             self.table.setItem(pos,0, QTableWidgetItem(str(recs[pos][0])))
             self.table.setItem(pos,1, QTableWidgetItem(str(recs[pos][1])))
             self.table.setItem(pos,2, QTableWidgetItem(str(recs[pos][2])))
-            self.table.setItem(pos,3, QTableWidgetItem(str(dispTime(recs[pos][3]))))
+            self.table.setItem(pos,3, QTableWidgetItem(str(recs[pos][3])))
             self.table.setItem(pos,4, QTableWidgetItem(str(dispTime(recs[pos][4]))))
-            self.table.setItem(pos,5, QTableWidgetItem(str(dispDuration(recs[pos][5]))))
+            self.table.setItem(pos,5, QTableWidgetItem(str(dispTime(recs[pos][5]))))
+            self.table.setItem(pos,6, QTableWidgetItem(str(dispDuration(recs[pos][6]))))
         conn.close()
+       
+        blankout_start=len(recs)
+        data_pop=True
+        while data_pop:
+            try:
+                table_pop=self.table.item(blankout_start,0).text()
+                self.table.setItem(blankout_start,0, QTableWidgetItem(str('')))
+                self.table.setItem(blankout_start,1, QTableWidgetItem(str('')))
+                self.table.setItem(blankout_start,2, QTableWidgetItem(str('')))
+                self.table.setItem(blankout_start,3, QTableWidgetItem(str('')))
+                self.table.setItem(blankout_start,4, QTableWidgetItem(str('')))
+                self.table.setItem(blankout_start,5, QTableWidgetItem(str('')))
+                self.table.setItem(blankout_start,6, QTableWidgetItem(str('')))
+                blankout_start+=1
+            except:
+                data_pop=False
+
  
         #self.table.setItem(0,0, QTableWidgetItem('hello'))
 

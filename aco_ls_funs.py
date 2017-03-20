@@ -60,37 +60,38 @@ def swap_locs(vehicles,visited,dataM,distM):
 def move_loc(vehicles,visited,dataM,distM):
     if len(visited)==len(dataM)-1:
         
-        Swap=False
+        Swap=False 
+        
         for veh in vehicles:
             for pos in range(1,len(veh['tour'])-1):
                 loc=veh['tour'][pos]
-                curr_dist=calc_dist(vehicles,distM)
-                bestNewDist={'dist':curr_dist,'vehNum1':-1,'vehNum2':-1}
+                curr_dist1=calc_dist(vehicles,distM)
                 
                 vehi0=copy.deepcopy(vehicles)
 
                 for veh0 in vehi0:
                     if veh0['vehNum']==veh['vehNum']:
                         del veh0['tour'][pos]
-
+                
                 for veh0 in vehi0:
                     for pos1 in range(1,len(veh0['tour'])-1):
                         veh0['tour'].insert(pos1,loc)
                         if check_tour_feas(veh0['tour'],dataM,distM):
-                            curr_dist=calc_dist(vehi0,distM)
-                            if curr_dist<bestNewDist['dist']:
+                            curr_dist2=calc_dist(vehi0,distM)
+                            if curr_dist2<curr_dist1:
                                 Swap=True
-                                bestNewDist['dist']=curr_dist
-                                bestNewDist['vehNum']=veh0['vehNum']
-                                bestNewDist['pos']=pos1
-
-                        del veh0['tour'][pos1]
+                        
+                        if Swap==False:
+                            del veh0['tour'][pos1]
                 
+                        if Swap:
+                            break
+                    if Swap:
+                        break
                 if Swap:
                     break
             if Swap:
                 break
-
         if Swap:
             vehicles=[veh for veh in vehi0]
 
@@ -151,7 +152,7 @@ def check_tour_feas(veh_tour,dataM,distM):
         t=max(t+distM[loc1][loc2],dataM[loc2]['ready_time'])
         if t>dataM[loc2]['due_time']:
             route_feasable=False
-
+            break
         t+=dataM[loc2]['service_time']
 
     return route_feasable
@@ -215,3 +216,44 @@ def swap_locsSLOW(vehicles,visited,dataM,distM):
 #                    if vehx1['vehNum']==vehx2['vehNum']:
 #                        vehx1['tour']=[locx for locx in vehx2['tour']]
     return vehicles
+
+
+def move_locOLD(vehicles,visited,dataM,distM):
+    if len(visited)==len(dataM)-1:
+        
+        Swap=False
+        for veh in vehicles:
+            for pos in range(1,len(veh['tour'])-1):
+                loc=veh['tour'][pos]
+                curr_dist=calc_dist(vehicles,distM)
+                bestNewDist={'dist':curr_dist,'vehNum1':-1,'vehNum2':-1}
+                
+                vehi0=copy.deepcopy(vehicles)
+
+                for veh0 in vehi0:
+                    if veh0['vehNum']==veh['vehNum']:
+                        del veh0['tour'][pos]
+
+                for veh0 in vehi0:
+                    for pos1 in range(1,len(veh0['tour'])-1):
+                        veh0['tour'].insert(pos1,loc)
+                        if check_tour_feas(veh0['tour'],dataM,distM):
+                            curr_dist=calc_dist(vehi0,distM)
+                            if curr_dist<bestNewDist['dist']:
+                                Swap=True
+                                bestNewDist['dist']=curr_dist
+                                bestNewDist['vehNum']=veh0['vehNum']
+                                bestNewDist['pos']=pos1
+
+                        del veh0['tour'][pos1]
+                
+                if Swap:
+                    break
+            if Swap:
+                break
+
+        if Swap:
+            vehicles=[veh for veh in vehi0]
+
+    return vehicles
+

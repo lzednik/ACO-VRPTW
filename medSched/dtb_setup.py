@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Feb  2 08:26:10 2017
-
-@author: ladislav.zednik
-"""
 
 import sqlite3
 
@@ -13,7 +7,17 @@ c=conn.cursor()
 
 #c.execute('DROP TABLE inZipDT')
 #c.execute('DROP TABLE schedule')
+c.execute('DROP TABLE schedStats')
 
+c.execute('''
+    CREATE TABLE schedStats(    svc_dt REAL,
+                                mbr_ct INTEGER,
+                                cm_ct_init INTEGER,
+                                cm_ct_aco INTEGER,
+                                dist_init REAL,
+                                dist_aco REAL
+                      )
+''')
 
 #c.execute('''
 #    CREATE TABLE cmAvlblt(  svc_dt REAL,
@@ -93,14 +97,14 @@ c=conn.cursor()
 #''')
 
 
-c.execute('''
-    CREATE TABLE distTme(   zip1 TEXT,
-                            zip2 TEXT,
-                            dist INT,
-                            tme INT
-                      )
-''')
-
+ #c.execute('''
+ #    CREATE TABLE distTme(   zip1 TEXT,
+ #                            zip2 TEXT,
+ #                            dist INT,
+ #                            tme INT
+ #                      )
+ #''')
+ #
 
 
 conn.close()

@@ -17,8 +17,6 @@ def aco_setup(input_file,depo):
     return(rt)    
 
 def aco_run(dataM,distM,depo,locCount,initSolution,alpha,BRCP,iterCount,colSize):
-    #phiM01= [[float(1)/initSolution['vehicleCount'] for i in range(locCount)] for j in range(locCount)]
-    #phiM02= [[float(1)/initSolution['distance'] for i in range(locCount)] for j in range(locCount)]
     phi01=float(1)/(len(dataM)*initSolution['vehicleCount'])
     phi02=float(1)/(len(dataM)*initSolution['distance'])
 
@@ -50,14 +48,6 @@ def aco_run(dataM,distM,depo,locCount,initSolution,alpha,BRCP,iterCount,colSize)
             solution1['alpha']=alpha
             solution1['BRCP']=BRCP
 
-            
-           #print('uuuuuuuuuuuuuuuuuuuuuuuuu')
-           # print('uuuuuuuuuuuuuuuuuuuuuuuuu')
-           # for x in solution1:
-           #     print(x)
-           # time.sleep(22) 
-           # print('uuuuuuuuuuuuuuuuuuuuuuuuu')
-           # print('uuuuuuuuuuuuuuuuuuuuuuuuu')
             
             sol1_found=False
             #Full Solution 1
@@ -109,19 +99,6 @@ def aco_run(dataM,distM,depo,locCount,initSolution,alpha,BRCP,iterCount,colSize)
                         print('****************\n')
             
 
-#            if bestSolution['vehicleCount']==19:
-#                fh = open('Output/vehicles.txt', 'w') 
-#                for veh in bestSolution['vehicles']:
-#                    for pos in range(len(veh['tour'])):
-#                        fh.write(str(veh['tour'][pos]))
-#                        if pos != len(veh['tour'])-1:
-#                            fh.write(',')
-#
-#                    fh.write('\n')
-#
-#                fh.close() 
-#                print('should be good')
-#                time.sleep(100)
             #evaporation
             for loc in solution1['tour']:
                 locFrom=loc[0]
