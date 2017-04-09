@@ -158,7 +158,7 @@ class resDisp(QWidget):
         self.alphaD=QLabel('Alpha')
         self.alphaDv=QLabel('0')
        
-        self.brcpD=QLabel('BiRCP')
+        self.brcpD=QLabel('Theta')
         self.brcpDv=QLabel('0')
        
         self.vehCountD = QLabel('Vehicle Count')	
@@ -194,7 +194,8 @@ class resDisp(QWidget):
 	 
         self.setLayout(layout)
     
-    def dispRefresh(self,vehicleCount,distance,iteration,iterationCount,colony,colonySize,alpha,BRCP):
+    def dispRefresh(self,vehicleCount,distance,iteration,iterationCount,colony,colonySize,alpha,Theta):
+    
         self.vehCountDv.setText(str(vehicleCount))
         self.vehCountDv.adjustSize()
         
@@ -216,7 +217,7 @@ class resDisp(QWidget):
         self.alphaDv.setText(str(alpha))
         self.alphaDv.adjustSize()
         
-        self.brcpDv.setText(str(BRCP))
+        self.brcpDv.setText(str(Theta))
         self.brcpDv.adjustSize()
 
 
@@ -232,15 +233,15 @@ class chartDisp(QWidget):
         self.figure.subplots_adjust(left=0.2,right=0.95,bottom=0.2,top=0.95)
         #self.figure.subplots_adjust(left=0.4,right=0.7,bottom=0.4,top=0.7)
         
-        self.button1 = QPushButton('Plot1')
-        self.button1.clicked.connect(self.plot1)
+        #self.button1 = QPushButton('Plot1')
+        #self.button1.clicked.connect(self.plot1)
         
-        self.button2=QPushButton('Plot2')
-        self.button2.clicked.connect(self.plot2)
+        #self.button2=QPushButton('Plot2')
+        #self.button2.clicked.connect(self.plot2)
         
-        layout.addWidget(self.button1,1,1,1,1)
-        layout.addWidget(self.button2,2,1,1,1)
-        layout.addWidget(self.canvas,3,1,1,1)
+        #layout.addWidget(self.button1,1,1,1,1)
+        #layout.addWidget(self.button2,2,1,1,1)
+        layout.addWidget(self.canvas,1,1,1,1)
         self.setFixedSize(300, 300)
         
         self.setLayout(layout)
@@ -288,7 +289,7 @@ class chartDisp(QWidget):
         vcs=[x[0] for x in c.fetchall()]
         
         bar_width=0.8/len(rsvDt) 
-        color_list=[ 'b','g','r','c','m','y','k','w']
+        color_list=[ 'b','g','r','c','m','y','k','w','navy','salmon']
         
         ax = self.figure.add_subplot(111)
         ax.clear()
@@ -381,7 +382,7 @@ class researchVar(QWidget):
         self.b1.clicked[bool].connect(lambda:self.btnstate(self.b1))
         layout.addWidget(self.b1)
 		
-        self.b2 = QPushButton("BRCP")
+        self.b2 = QPushButton("Theta")
         self.b2.setCheckable(True)
         self.b2.clicked[bool].connect(lambda:self.btnstate(self.b2))
         layout.addWidget(self.b2)
@@ -418,11 +419,11 @@ class researchVar(QWidget):
                 self.resVar='Alpha'
             else:
                 self.resVar='None'
-        if b.text()=='BRCP':
+        if b.text()=='Theta':
             self.b1.setChecked(False)
             self.b3.setChecked(False)
             if self.b2.isChecked():
-                self.resVar='BRCP'
+                self.resVar='Theta'
             else:
                 self.resVar='None'
         
@@ -458,77 +459,83 @@ def run_bt_clicked(self):
         rsvStep=round(float(rsv1.stepLv.text()),2)
     
     depo=0
-    input_file=fd.inpFilePath
-    srt=aco_setup(input_file,depo)
-    dataM=srt['dataM']
-    distM=srt['distM']
-    locCount=srt['locCount']
-    initSol=srt['initSol']
+    file_select=True
+    try:
+        input_file=fd.inpFilePath
+    except:
+        file_select=False
 
-    alpha=round(slideVals['Alpha']/100.,2)
-    BRCP=round(slideVals['BRCP']/100.,2)
-    runCount=slideVals['Run Count']
-    iterCount=slideVals['Iteration Count']
-    colSize=slideVals['Colony Size']
-    
-    print('alpha',alpha)
-    print('BRCP',BRCP)
-    print('runCount',runCount)
-    print('iterCount',iterCount)
-    print('colSize',colSize)
+    if file_select:
+        srt=aco_setup(input_file,depo)
+        dataM=srt['dataM']
+        distM=srt['distM']
+        locCount=srt['locCount']
+        initSol=srt['initSol']
 
-    id_var=1
-    for run in range(runCount):
+        alpha=round(slideVals['Alpha']/100.,2)
+        Theta=round(slideVals['Theta']/100.,2)
+        runCount=slideVals['Run Count']
+        iterCount=slideVals['Iteration Count']
+        colSize=slideVals['Colony Size']
         
-        rsvV=rsvFrom
-        while rsvV<=rsvTo:
-            if rsv=='Alpha':
-                alpha=rsvV
-            if rsv=='BRCP':
-                BRCP=rsvV
-            if rsv=='Colony Size':
-                colSize=int(rsvV)
+        print('alpha',alpha)
+        print('Theta',Theta)
+        print('runCount',runCount)
+        print('iterCount',iterCount)
+        print('colSize',colSize)
 
-            solution=aco_run(dataM,distM,depo,locCount,initSol,alpha,BRCP,iterCount,colSize)
-
-            c.execute('''INSERT INTO Solutions(idVar,run,iteration,iterCount,colony,colonySize,alpha,BRCP,vehCount,distance)
-      VALUES(?,?,?,?,?,?,?,?,?,?)''', (id_var,run,solution['iteration'],iterCount,solution['colony'],colSize,alpha,BRCP,solution['vehicleCount'],solution['distance'])) 
-           
-            for veh in solution['vehicles']:
-                c.execute('''INSERT INTO Vehicles(idVar,vehNum,vehTour)
-                           VALUES(?,?,?)''', (id_var,veh['vehNum'],str(veh['tour']))) 
+        id_var=1
+        for run in range(runCount):
             
-            id_var+=1
-            conn.commit()
+            rsvV=rsvFrom
+            while rsvV<=rsvTo:
+                if rsv=='Alpha':
+                    alpha=rsvV
+                if rsv=='Theta':
+                    Theta=rsvV
+                if rsv=='Colony Size':
+                    colSize=int(rsvV)
 
-            bsRefresh=False
-            if run==0:
-                bestSolution=solution
-                bsRefresh=True
+                solution=aco_run(dataM,distM,depo,locCount,initSol,alpha,Theta,iterCount,colSize)
 
-            if solution['vehicleCount']< bestSolution['vehicleCount']:
-                bestSolution=solution
-                bsRefresh=True
-            if solution['vehicleCount']==bestSolution['vehicleCount'] and solution['distance']<bestSolution['distance']:
-                bestSolution=solution        
-                bsRefresh=True
+                c.execute('''INSERT INTO Solutions(idVar,run,iteration,iterCount,colony,colonySize,alpha,theta,vehCount,distance)
+          VALUES(?,?,?,?,?,?,?,?,?,?)''', (id_var,run,solution['iteration'],iterCount,solution['colony'],colSize,alpha,Theta,solution['vehicleCount'],solution['distance'])) 
+               
+                for veh in solution['vehicles']:
+                    c.execute('''INSERT INTO Vehicles(idVar,vehNum,vehTour)
+                               VALUES(?,?,?)''', (id_var,veh['vehNum'],str(veh['tour']))) 
+                
+                id_var+=1
+                conn.commit()
 
-            d1.dispRefresh(solution['vehicleCount'],solution['distance'],solution['iteration'],iterCount,solution['colony'],colSize,alpha,BRCP)
-            if bsRefresh==True:
-                d2.dispRefresh(bestSolution['vehicleCount'],bestSolution['distance'],bestSolution['iteration'],iterCount,bestSolution['colony'],colSize,alpha,BRCP)
-            
-            rd1.runRefresh(run)
-            if rsv == 'None':
-                chart1.plot1()
-            else:
-                chart1.plot2()
-            
-            rsvV+=rsvStep
-            rsvV=round(rsvV,2)
-            
-            
+                bsRefresh=False
+                if run==0:
+                    bestSolution=solution
+                    bsRefresh=True
 
-            QApplication.processEvents()
+                if solution['vehicleCount']< bestSolution['vehicleCount']:
+                    bestSolution=solution
+                    bsRefresh=True
+                if solution['vehicleCount']==bestSolution['vehicleCount'] and solution['distance']<bestSolution['distance']:
+                    bestSolution=solution        
+                    bsRefresh=True
+
+                d1.dispRefresh(solution['vehicleCount'],solution['distance'],solution['iteration'],iterCount,solution['colony'],colSize,alpha,Theta)
+                if bsRefresh==True:
+                    d2.dispRefresh(bestSolution['vehicleCount'],bestSolution['distance'],bestSolution['iteration'],iterCount,bestSolution['colony'],colSize,alpha,Theta)
+                
+                rd1.runRefresh(run)
+                if rsv == 'None':
+                    chart1.plot1()
+                else:
+                    chart1.plot2()
+                
+                rsvV+=rsvStep
+                rsvV=round(rsvV,2)
+                
+                
+
+                QApplication.processEvents()
     pStatus.processStatus('Run Complete')
 
 if __name__ == "__main__":
@@ -559,7 +566,7 @@ if __name__ == "__main__":
     
     
     s1.setSlide('Alpha','perc',20,5,50)
-    s2.setSlide('BRCP','perc',60,0,100)
+    s2.setSlide('Theta','perc',60,0,100)
     s3.setSlide('Run Count','count',1,1,100)
     s4.setSlide('Iteration Count','count',30,1,50)
     s5.setSlide('Colony Size','count',20,1,100)

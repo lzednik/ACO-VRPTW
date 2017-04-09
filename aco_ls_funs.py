@@ -59,9 +59,7 @@ def swap_locs(vehicles,visited,dataM,distM):
 
 def move_loc(vehicles,visited,dataM,distM):
     if len(visited)==len(dataM)-1:
-        
         Swap=False 
-        
         for veh in vehicles:
             for pos in range(1,len(veh['tour'])-1):
                 loc=veh['tour'][pos]

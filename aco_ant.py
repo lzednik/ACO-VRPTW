@@ -9,7 +9,7 @@ class Ant:
         self.vehicleCount=vehicleCount 
         self.locLog={}
         self.test=5
-    def calculate(self,dataM,distM,phiM,depo,tour,BRCP,sol_type):
+    def calculate(self,dataM,distM,phiM,depo,tour,Theta,sol_type):
         #reset
         self.visited=[]
         self.tour=[]
@@ -35,7 +35,7 @@ class Ant:
 
                     choiceRand=random.uniform(0,1)
                     nlcr=False
-                    if choiceRand<BRCP:
+                    if choiceRand<Theta:
                         pos_next_locs=[]
                         for arch in tour:
                             if arch[0]==vehicle['currPos']:
@@ -54,6 +54,7 @@ class Ant:
                         attractL0={}
                         attr0Sum=0
                         attractL1={}
+                        attractL2={}
                         choiceList=[]
                         
                         #remove tour loc from feaslocs
@@ -79,22 +80,28 @@ class Ant:
                             attr0=delta_time*(feasLocDueTime-vehicle['time'])
                             attractL0[feasLoc]=attr0
                             
-                            attractL0[feasLoc]=attr0
-                            
                         attr0Sum=0
                         for loc in attractL0:
-                            attr0Sum+=(phiM[vehicle['currPos']][loc])*(attractL0[loc])**2
+                            attr0Sum+=(phiM[vehicle['currPos']][loc])*(1./((attractL0[loc])**2))
                     
                         for loc in attractL0:
-                            attractL1[loc]=int(attr0Sum/((phiM[vehicle['currPos']][loc])*(attractL0[loc])**2))
+                            attractL1[loc]=attr0Sum/(phiM[vehicle['currPos']][loc]*(1./(attractL0[loc])**2))
                         
                         mv_al1=max(attractL1.values())
-                        if mv_al1>10000:
-                            for loc in attractL1:
-                                attractL1[loc]=int(10000*float(attractL1[loc])/mv_al1)
-
                         for loc in attractL1:
-                            choiceList+=attractL1[loc]*[loc]
+                            attractL2[loc]=int(mv_al1/float(attractL1[loc]))
+                        
+                        mv_al2_red=True
+                        while mv_al2_red:
+                            mv_al2=max(attractL2.values())
+                            if mv_al2<10000:
+                                mv_al2_red=False
+                            else:
+                                for loc in attractL2:
+                                    attractL2[loc]=int(attractL2[loc]/10)
+                        
+                        for loc in attractL2:
+                                choiceList+=attractL2[loc]*[loc]
                             #if sol_type=='sol2':
                             #    print(loc,attractL1[loc],distM[vehicle['currPos']][loc])
                             #    time.sleep(3)

@@ -16,7 +16,7 @@ def aco_setup(input_file,depo):
             'initSol':initSol}
     return(rt)    
 
-def aco_run(dataM,distM,depo,locCount,initSolution,alpha,BRCP,iterCount,colSize):
+def aco_run(dataM,distM,depo,locCount,initSolution,alpha,Theta,iterCount,colSize):
     phi01=float(1)/(len(dataM)*initSolution['vehicleCount'])
     phi02=float(1)/(len(dataM)*initSolution['distance'])
 
@@ -40,13 +40,13 @@ def aco_run(dataM,distM,depo,locCount,initSolution,alpha,BRCP,iterCount,colSize)
         #visitedArcs2=[]
         for colony in range(colSize):
             colony1=Ant(vehicleCount=vehicleCount1,dataM=dataM)
-            solution1=colony1.calculate(dataM,distM,phiM1,depo,bestSolution['tour'],BRCP,'sol1')
+            solution1=colony1.calculate(dataM,distM,phiM1,depo,bestSolution['tour'],Theta,'sol1')
 
             
             solution1['iteration']=iteration
             solution1['colony']=colony
             solution1['alpha']=alpha
-            solution1['BRCP']=BRCP
+            solution1['Theta']=Theta
 
             
             sol1_found=False
@@ -74,12 +74,12 @@ def aco_run(dataM,distM,depo,locCount,initSolution,alpha,BRCP,iterCount,colSize)
 
             if sol1_found==False:
                 colony2=Ant(vehicleCount=vehicleCount2,dataM=dataM)
-                solution2=colony2.calculate(dataM,distM,phiM2,depo,bestSolution['tour'],BRCP,'sol2')
+                solution2=colony2.calculate(dataM,distM,phiM2,depo,bestSolution['tour'],Theta,'sol2')
 
                 solution2['iteration']=iteration
                 solution2['colony']=colony
                 solution2['alpha']=alpha
-                solution2['BRCP']=BRCP
+                solution2['Theta']=Theta
                 
                 #Full Solution 2
                 if solution2['visitedCount']==locCount-1:
@@ -103,27 +103,34 @@ def aco_run(dataM,distM,depo,locCount,initSolution,alpha,BRCP,iterCount,colSize)
             for loc in solution1['tour']:
                 locFrom=loc[0]
                 locTo=loc[1]
-                #phiM1[locFrom][locTo]=(1-alpha)*phiM1[locFrom][locTo]+alpha*phiM01[locFrom][locTo]
                 phiM1[locFrom][locTo]=(1-alpha)*phiM1[locFrom][locTo]+alpha*phi01
-           
             if sol1_found==False:
                 for loc in solution2['tour']:
                     locFrom=loc[0]
                     locTo=loc[1]
-                    #phiM2[locFrom][locTo]=(1-alpha)*phiM2[locFrom][locTo]+alpha*phiM02[locFrom][locTo]
                     phiM2[locFrom][locTo]=(1-alpha)*phiM2[locFrom][locTo]+alpha*phi02
            
+            #phi updates
+
+            for arc in bestArcs1:
+                locFrom=arc[0]
+                locTo=arc[1]
+                phiM1[locFrom][locTo]=(1-alpha)*phiM1[locFrom][locTo]+alpha/((bestSolution['vehicleCount']))
+
+            for arc in bestArcs2:
+                locFrom=arc[0]
+                locTo=arc[1]
+                phiM2[locFrom][locTo]=(1-alpha)*phiM2[locFrom][locTo]+alpha/bestSolution['distance']
+
         #phi updates
 
-        for arc in bestArcs1:
-            locFrom=arc[0]
-            locTo=arc[1]
-            phiM1[locFrom][locTo]=(1-alpha)*phiM1[locFrom][locTo]+alpha/((bestSolution['vehicleCount']))
-
-        for arc in bestArcs2:
-            locFrom=arc[0]
-            locTo=arc[1]
-            phiM2[locFrom][locTo]=(1-alpha)*phiM2[locFrom][locTo]+alpha/bestSolution['distance']
-
+#        for arc in bestArcs1:
+#            locFrom=arc[0]
+#            locTo=arc[1]
+#            phiM1[locFrom][locTo]=(1-alpha)*phiM1[locFrom][locTo]+alpha/((bestSolution['vehicleCount']))
+#        for arc in bestArcs2:
+#            locFrom=arc[0]
+#            locTo=arc[1]
+#            phiM2[locFrom][locTo]=(1-alpha)*phiM2[locFrom][locTo]+alpha/bestSolution['distance']
         
     return bestSolution        
